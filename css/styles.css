@@ -1,0 +1,180 @@
+/* Muziris – City At Sea */
+
+:root {
+  --deep-ocean: #16324F;
+  --glacier: #B9D9E1;
+  --turquoise: #447F98;
+  --slate: #629BB5;
+  --ice: #D6EBF3;
+  --platinum: #DADEE1;
+  --white: #FFFFFF;
+
+  --font: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --container: 1280px;
+  --gutter: clamp(16px, 4vw, 48px);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--white);
+  background: var(--deep-ocean);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: .6em;
+  padding: 1em 1.8em; border-radius: 999px;
+  font: 600 .95rem/1 var(--font); letter-spacing: .02em;
+  border: 1px solid transparent;
+  transition: background .25s, color .25s, border-color .25s;
+}
+.btn--primary { background: var(--ice); color: var(--deep-ocean); }
+.btn--primary:hover { background: var(--white); }
+.btn--outline { border-color: rgba(214, 235, 243, .5); color: var(--ice); }
+.btn--outline:hover { background: rgba(214, 235, 243, .12); border-color: var(--ice); }
+.btn--sm { padding: .7em 1.3em; font-size: .85rem; }
+.btn:focus-visible { outline: 2px solid var(--glacier); outline-offset: 3px; }
+
+/* ---------- Header ---------- */
+/* Sits over the top of the hero video and scrolls away with it.
+   --edge / --top / --logo-w set the logo position and size per breakpoint. */
+:root { --edge: 40px; --top: 30px; --logo-w: 130px; --logo-h: calc(var(--logo-w) * 437 / 480); }
+@media (max-width: 1024px) { :root { --edge: 30px; --top: 25px; --logo-w: 110px; } }
+@media (max-width: 640px)  { :root { --edge: 20px; --top: 20px; --logo-w: 90px; } }
+
+.site-header {
+  position: absolute; inset: 0 0 auto; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  padding: var(--top) var(--edge) 0;
+}
+.brand { display: block; flex: none; line-height: 0; position: relative; z-index: 2; }
+.brand-logo { width: var(--logo-w); height: auto; }
+
+.site-nav { display: flex; align-items: center; gap: clamp(18px, 1.8vw, 30px); font-size: .9rem; font-weight: 500; }
+.site-nav a { color: #0D3B66; padding: 6px 0; border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; white-space: nowrap; }
+.site-nav a:hover { color: #1E5F9E; border-bottom-color: #1E5F9E; }
+.site-nav a[aria-current="page"] { color: #0D3B66; border-bottom-color: #0D3B66; }
+.site-nav a:focus-visible, .nav-toggle:focus-visible { outline: 2px solid var(--glacier); outline-offset: 4px; }
+
+.nav-toggle {
+  display: none; position: relative; z-index: 2;
+  width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer;
+}
+.nav-toggle span { position: absolute; left: 10px; right: 10px; height: 2px; background: #0D3B66; border-radius: 2px; transition: transform .25s, opacity .25s; }
+.nav-toggle span:nth-child(1) { top: 15px; }
+.nav-toggle span:nth-child(2) { top: 21px; }
+.nav-toggle span:nth-child(3) { top: 27px; }
+.nav-open .nav-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* Compact menu once the full row no longer fits beside the logo */
+@media (max-width: 1180px) {
+  .nav-toggle { display: block; }
+  .site-nav {
+    position: fixed; inset: 0; z-index: 1;
+    flex-direction: column; justify-content: center; gap: 6px;
+    background: rgba(230, 244, 255, .97); /* light panel so the #0D3B66 links stay readable */
+    font-size: 1.15rem;
+    opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s;
+  }
+  .nav-open .site-nav { opacity: 1; visibility: visible; }
+  .site-nav a { padding: 10px 0; }
+  .nav-open { overflow: hidden; }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative; isolation: isolate; overflow: hidden;
+  height: 100vh; height: 100svh; min-height: 560px;
+  display: flex; align-items: flex-start;
+  padding-top: calc(var(--top) + var(--logo-h) + clamp(24px, 6vh, 72px));
+}
+
+/* Background video. The poster frame shows until playback starts. */
+.hero-media {
+  position: absolute; inset: 0; z-index: -1; overflow: hidden;
+  background: var(--deep-ocean) url("../Assets/Videos/hero-poster.jpg") 58% center / cover no-repeat;
+}
+.hero-video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 58% center;
+  pointer-events: none;
+}
+.hero-video::-webkit-media-controls,
+.hero-video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
+
+/* Light deep-blue tint behind the text only (upper left); the city stays untouched.
+   The last few percent fade into the page colour so the next section joins cleanly. */
+.hero-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(100deg, rgba(22, 50, 79, .72) 0%, rgba(22, 50, 79, .4) 30%, transparent 52%),
+    linear-gradient(180deg, transparent 88%, var(--deep-ocean) 100%);
+  /* No tint behind the logo: the video shows through untouched up there */
+  -webkit-mask-image: linear-gradient(180deg, transparent calc(var(--top) + var(--logo-h)), #000 calc(var(--top) + var(--logo-h) + 80px));
+          mask-image: linear-gradient(180deg, transparent calc(var(--top) + var(--logo-h)), #000 calc(var(--top) + var(--logo-h) + 80px));
+}
+
+.hero-content { padding: 0 var(--edge); }
+.hero-content > * { max-width: 520px; }
+
+.hero-eyebrow {
+  margin: 0 0 1.2em; display: flex; align-items: center; gap: 14px;
+  font-size: .78rem; font-weight: 600; letter-spacing: .34em; text-transform: uppercase; color: var(--glacier);
+}
+.hero-eyebrow::before { content: ""; width: 36px; height: 1px; background: var(--turquoise); }
+
+.hero-title {
+  margin: 0 0 .5em;
+  font-size: clamp(3rem, 7vw, 6rem); font-weight: 800; line-height: .95; letter-spacing: .04em; text-transform: uppercase;
+  text-shadow: 0 2px 24px rgba(22, 50, 79, .35);
+}
+.hero-title span {
+  display: block; margin-top: .55em;
+  font-size: .3em; font-weight: 500; letter-spacing: .55em; color: var(--ice);
+}
+
+.hero-lead { margin: 0 0 2.2em; font-size: clamp(1rem, 1.25vw, 1.1rem); line-height: 1.7; color: var(--ice); }
+
+.btn--primary { text-transform: uppercase; letter-spacing: .12em; font-size: .85rem; }
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .hero-content > * { max-width: 440px; }
+  .hero-overlay {
+    background:
+      linear-gradient(100deg, rgba(22, 50, 79, .75) 0%, rgba(22, 50, 79, .45) 38%, transparent 62%),
+      linear-gradient(180deg, transparent 88%, var(--deep-ocean) 100%);
+  }
+}
+
+/* Mobile: text sits over the sky; the crop keeps the towers and dome in frame */
+@media (max-width: 640px) {
+  .hero-media { background-position: 60% center; }
+  .hero-video { object-position: 60% center; }
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(22, 50, 79, .75) 0%, rgba(22, 50, 79, .45) 38%, transparent 58%, transparent 88%, var(--deep-ocean) 100%);
+  }
+  .hero-content > * { max-width: 100%; }
+  .hero-title { font-size: clamp(2.6rem, 13vw, 3.4rem); }
+  .hero-eyebrow { font-size: .7rem; letter-spacing: .26em; }
+  .hero-lead { font-size: .95rem; margin-bottom: 1.6em; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-content > * { animation: rise .9s ease both; }
+  .hero-content > :nth-child(2) { animation-delay: .1s; }
+  .hero-content > :nth-child(3) { animation-delay: .2s; }
+  .hero-content > :nth-child(4) { animation-delay: .3s; }
+}
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }

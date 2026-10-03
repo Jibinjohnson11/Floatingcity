@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Muziris – City At Sea | Floating City Limited</title>
+  <meta name="description" content="Muziris – City At Sea: a proposed floating smart city by Floating City Limited. A city without borders.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="Assets/Videos/hero-poster.jpg">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/hero.js" defer></script>
+  <script src="js/nav.js" defer></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="#" aria-label="Floating City Limited — City at Sea, home">
+    <img class="brand-logo" src="Assets/logo/logo-web.png" alt="Floating City Limited — City at Sea" width="480" height="437">
+  </a>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+  <nav class="site-nav" id="site-nav" aria-label="Main">
+    <a href="#" aria-current="page">Home</a>
+    <a href="#about">About</a>
+    <a href="#city">The City</a>
+    <a href="#life">Life at Sea</a>
+    <a href="#decks">Decks</a>
+    <a href="#technology">Technology</a>
+    <a href="#sustainability">Sustainability</a>
+    <a href="#investment">Investment</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-media" aria-hidden="true">
+      <!-- 4K HEVC original on large screens; 1080p H.264 copy for phones and browsers without HEVC -->
+      <video class="hero-video" autoplay muted loop playsinline preload="auto"
+             poster="Assets/Videos/hero-poster.jpg"
+             disablepictureinpicture disableremoteplayback tabindex="-1">
+        <source src="Assets/Videos/Hero%20section.MOV" type='video/mp4; codecs="hvc1"' media="(min-width: 1600px)">
+        <source src="Assets/Videos/hero-1080.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
+    </div>
+
+    <div class="hero-content">
+      <h1 class="hero-title" id="hero-title">Muziris <span>City at Sea</span></h1>
+      <p class="hero-lead">A next-generation floating smart city combining luxury living, world-class amenities, sustainable innovation, and a journey across the globe.</p>
+      <a class="btn btn--primary" href="#city">Explore the city <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
