@@ -45,87 +45,137 @@ a { color: inherit; text-decoration: none; }
 .btn:focus-visible { outline: 2px solid var(--glacier); outline-offset: 3px; }
 
 /* ---------- Header ---------- */
-/* Sits over the top of the hero video and scrolls away with it.
-   --edge / --top / --logo-w set the logo position and size per breakpoint. */
+/* Hero spacing still keys off these (padding-top and overlay mask), so they stay as they were.
+   The navbar below has its own --nav-* sizes and never changes the hero layout. */
 :root { --edge: 40px; --top: 30px; --logo-w: 130px; --logo-h: calc(var(--logo-w) * 437 / 480); }
 @media (max-width: 1024px) { :root { --edge: 30px; --top: 25px; --logo-w: 110px; } }
 @media (max-width: 640px)  { :root { --edge: 20px; --top: 20px; --logo-w: 90px; } }
 
-.site-header {
-  position: absolute; inset: 0 0 auto; z-index: 10;
-  display: flex; align-items: center; justify-content: space-between; gap: 32px;
-  padding: var(--top) var(--edge) 0;
+/* Floating glass navbar. The glass lives on ::before (not the header itself) so the
+   mobile panel inside it can run its own backdrop blur. */
+:root {
+  --nav-ocean: #0D3B66; --nav-sky: #00AEEF; --nav-aqua: #4FC3F7; --nav-ice: #E6F4FF; --nav-slate: #1B2E4B;
+  --nav-offset: 16px; --nav-side: 24px; --nav-logo-h: 56px; --nav-ease: cubic-bezier(.22, .61, .36, 1);
 }
-.brand { display: block; flex: none; line-height: 0; position: relative; z-index: 2; }
-.brand-logo { width: var(--logo-w); height: auto; }
+@media (max-width: 640px) { :root { --nav-offset: 12px; --nav-side: 12px; --nav-logo-h: 48px; } }
 
-.site-nav { display: flex; align-items: center; gap: clamp(18px, 1.8vw, 30px); font-size: .9rem; font-weight: 500; }
-.site-nav a { color: #0D3B66; padding: 6px 0; border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; white-space: nowrap; }
-.site-nav a:hover { color: #1E5F9E; border-bottom-color: #1E5F9E; }
-.site-nav a[aria-current="page"] { color: #0D3B66; border-bottom-color: #0D3B66; }
-.site-nav a:focus-visible, .nav-toggle:focus-visible { outline: 2px solid var(--glacier); outline-offset: 4px; }
+html { scroll-padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 40px); } /* anchors land below the bar */
+
+.site-header {
+  position: fixed; z-index: 10;
+  top: var(--nav-offset); left: var(--nav-side); right: var(--nav-side);
+  max-width: 1240px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  padding: 8px 12px 8px 22px;
+  border-radius: 20px;
+}
+.site-header::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
+  background-color: rgba(230, 244, 255, .10);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 70%); /* soft sheen, same in both states */
+  border: 1px solid rgba(255, 255, 255, .32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 8px 32px rgba(13, 59, 102, .10); /* top-edge highlight + soft lift */
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+          backdrop-filter: blur(12px) saturate(140%);
+  transition: background-color .4s var(--nav-ease), box-shadow .4s var(--nav-ease), border-color .4s var(--nav-ease),
+              -webkit-backdrop-filter .4s var(--nav-ease), backdrop-filter .4s var(--nav-ease);
+}
+.site-header.is-scrolled::before {
+  background-color: rgba(230, 244, 255, .55);
+  border-color: rgba(13, 59, 102, .10); /* navy hairline stays visible over light content */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 10px 36px rgba(13, 59, 102, .14);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+          backdrop-filter: blur(18px) saturate(150%);
+}
+
+.brand { display: block; flex: none; line-height: 0; position: relative; z-index: 2; border-radius: 8px; }
+.brand-logo { height: var(--nav-logo-h); width: auto; }
+
+.site-nav { display: flex; align-items: center; gap: clamp(18px, 1.6vw, 28px); font-size: .84rem; font-weight: 500; letter-spacing: .04em; }
+.site-nav a { position: relative; padding: 10px 0; color: var(--nav-ocean); white-space: nowrap; transition: color .3s var(--nav-ease); }
+/* Thin underline that grows from the centre on hover and stays for the active link */
+.site-nav a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 4px; height: 1.5px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--nav-sky), var(--nav-aqua));
+  transform: scaleX(0); transition: transform .3s var(--nav-ease);
+}
+.site-nav a:hover { color: color-mix(in srgb, var(--nav-ocean) 35%, var(--nav-sky)); }
+.site-nav a:hover::after, .site-nav a[aria-current]::after { transform: scaleX(1); }
+.brand:focus-visible, .site-nav a:focus-visible, .nav-toggle:focus-visible { outline: 2px solid var(--nav-sky); outline-offset: 4px; }
 
 .nav-toggle {
   display: none; position: relative; z-index: 2;
-  width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer;
+  width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px; background: none; cursor: pointer;
 }
-.nav-toggle span { position: absolute; left: 10px; right: 10px; height: 2px; background: #0D3B66; border-radius: 2px; transition: transform .25s, opacity .25s; }
-.nav-toggle span:nth-child(1) { top: 15px; }
-.nav-toggle span:nth-child(2) { top: 21px; }
+.nav-toggle span { position: absolute; left: 12px; right: 12px; height: 1.5px; background: var(--nav-ocean); border-radius: 2px; transition: transform .3s var(--nav-ease), opacity .3s var(--nav-ease); }
+.nav-toggle span:nth-child(1) { top: 16px; }
+.nav-toggle span:nth-child(2) { top: 21.5px; }
 .nav-toggle span:nth-child(3) { top: 27px; }
-.nav-open .nav-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-open .nav-toggle span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
 .nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
-.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 
-/* Compact menu once the full row no longer fits beside the logo */
-@media (max-width: 1180px) {
+/* Tablet / mobile: hamburger + frosted panel dropping from the bar */
+@media (max-width: 1100px) {
+  .site-header { padding: 6px 6px 6px 16px; }
   .nav-toggle { display: block; }
   .site-nav {
-    position: fixed; inset: 0; z-index: 1;
-    flex-direction: column; justify-content: center; gap: 6px;
-    background: rgba(230, 244, 255, .97); /* light panel so the #0D3B66 links stay readable */
-    font-size: 1.15rem;
-    opacity: 0; visibility: hidden; transition: opacity .25s, visibility .25s;
+    position: absolute; top: calc(100% + 10px); left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 0;
+    max-height: calc(100svh - var(--nav-offset) - var(--nav-logo-h) - 40px); overflow-y: auto;
+    padding: 10px; border-radius: 20px;
+    background: rgba(230, 244, 255, .82);
+    border: 1px solid rgba(255, 255, 255, .5);
+    box-shadow: 0 18px 48px rgba(13, 59, 102, .18);
+    -webkit-backdrop-filter: blur(22px) saturate(160%);
+            backdrop-filter: blur(22px) saturate(160%);
+    font-size: .95rem;
+    opacity: 0; visibility: hidden; transform: translateY(-8px);
+    transition: opacity .3s var(--nav-ease), transform .3s var(--nav-ease), visibility .3s;
   }
-  .nav-open .site-nav { opacity: 1; visibility: visible; }
-  .site-nav a { padding: 10px 0; }
+  .nav-open .site-nav { opacity: 1; visibility: visible; transform: none; }
+  .site-nav a { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: 12px; transition: color .3s var(--nav-ease), background .3s var(--nav-ease); }
+  .site-nav a:hover { background: rgba(0, 174, 239, .08); }
+  /* Indicator becomes a short bar under the label */
+  .site-nav a::after { left: 14px; right: auto; width: 22px; bottom: 8px; transform-origin: left; }
+  .site-nav a + a { border-top: 1px solid rgba(13, 59, 102, .07); }
   .nav-open { overflow: hidden; }
+  .nav-open .site-header::before { background: rgba(230, 244, 255, .72); }
 }
 
 /* ---------- Hero ---------- */
 .hero {
   position: relative; isolation: isolate; overflow: hidden;
-  height: 100vh; height: 100svh; min-height: 560px;
-  display: flex; align-items: flex-start;
+  /* One viewport by default; grows only if the content plus the numbers band need more room */
+  min-height: 560px; min-height: max(560px, 100vh); min-height: max(560px, 100svh);
+  display: flex; flex-direction: column;
   padding-top: calc(var(--top) + var(--logo-h) + clamp(24px, 6vh, 72px));
 }
 
-/* Background video. The poster frame shows until playback starts. */
+/* Background video. Deep-ocean fill shows until the first frame is ready. */
 .hero-media {
   position: absolute; inset: 0; z-index: -1; overflow: hidden;
-  background: var(--deep-ocean) url("../Assets/Videos/hero-poster.jpg") 58% center / cover no-repeat;
+  background: var(--deep-ocean);
 }
 .hero-video {
   position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; object-position: 58% center;
+  object-fit: cover; object-position: center;
   pointer-events: none;
 }
 .hero-video::-webkit-media-controls,
 .hero-video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
 
-/* Light deep-blue tint behind the text only (upper left); the city stays untouched.
-   The last few percent fade into the page colour so the next section joins cleanly. */
+/* Subtle navy tint behind the text only (left side), fading out before the ship so the video stays bright. */
 .hero-overlay {
   position: absolute; inset: 0;
   background:
-    linear-gradient(100deg, rgba(22, 50, 79, .72) 0%, rgba(22, 50, 79, .4) 30%, transparent 52%),
-    linear-gradient(180deg, transparent 88%, var(--deep-ocean) 100%);
+    linear-gradient(100deg, rgba(13, 59, 102, .5) 0%, rgba(13, 59, 102, .22) 26%, transparent 42%);
   /* No tint behind the logo: the video shows through untouched up there */
   -webkit-mask-image: linear-gradient(180deg, transparent calc(var(--top) + var(--logo-h)), #000 calc(var(--top) + var(--logo-h) + 80px));
           mask-image: linear-gradient(180deg, transparent calc(var(--top) + var(--logo-h)), #000 calc(var(--top) + var(--logo-h) + 80px));
 }
 
-.hero-content { padding: 0 var(--edge); }
+.hero-content { padding: 0 var(--edge) 24px; }
 .hero-content > * { max-width: 520px; }
 
 .hero-eyebrow {
@@ -153,22 +203,38 @@ a { color: inherit; text-decoration: none; }
   .hero-content > * { max-width: 440px; }
   .hero-overlay {
     background:
-      linear-gradient(100deg, rgba(22, 50, 79, .75) 0%, rgba(22, 50, 79, .45) 38%, transparent 62%),
-      linear-gradient(180deg, transparent 88%, var(--deep-ocean) 100%);
+      linear-gradient(100deg, rgba(13, 59, 102, .55) 0%, rgba(13, 59, 102, .28) 32%, transparent 52%);
   }
 }
 
 /* Mobile: text sits over the sky; the crop keeps the towers and dome in frame */
 @media (max-width: 640px) {
-  .hero-media { background-position: 60% center; }
-  .hero-video { object-position: 60% center; }
   .hero-overlay {
-    background: linear-gradient(180deg, rgba(22, 50, 79, .75) 0%, rgba(22, 50, 79, .45) 38%, transparent 58%, transparent 88%, var(--deep-ocean) 100%);
+    background: linear-gradient(180deg, rgba(13, 59, 102, .55) 0%, rgba(13, 59, 102, .28) 34%, transparent 52%);
   }
   .hero-content > * { max-width: 100%; }
   .hero-title { font-size: clamp(2.6rem, 13vw, 3.4rem); }
   .hero-eyebrow { font-size: .7rem; letter-spacing: .26em; }
   .hero-lead { font-size: .95rem; margin-bottom: 1.6em; }
+  /* On short phones the text can reach the ship's deck; a soft local shadow keeps it legible
+     without tinting the video */
+  .hero-title span, .hero-lead { text-shadow: 0 1px 14px rgba(13, 59, 102, .6); }
+}
+
+/* Small mobile: tighter tracking so CITY AT SEA keeps its rhythm in a narrow column */
+@media (max-width: 479px) {
+  .hero-title span { letter-spacing: .42em; }
+  .hero-lead { font-size: .93rem; line-height: 1.65; }
+}
+
+/* Landscape phones: drop the tall minimum so the hero is one screen, and tighten the
+   vertical rhythm so all content fits under the navbar */
+@media (orientation: landscape) and (max-height: 540px) {
+  .hero { min-height: 340px; padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 16px + clamp(20px, 6vh, 36px)); }
+  .hero-title { font-size: clamp(2.2rem, 11vh, 3.4rem); margin-bottom: .4em; }
+  .hero-title span { margin-top: .45em; }
+  .hero-lead { font-size: .9rem; line-height: 1.55; margin-bottom: 1.2em; max-width: min(440px, 55vw); }
+  .hero-title span, .hero-lead { text-shadow: 0 1px 14px rgba(13, 59, 102, .6); }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -215,3 +281,68 @@ a { color: inherit; text-decoration: none; }
 @keyframes logo-in { from { opacity: 0; transform: translateY(12px) scale(.96); } }
 @keyframes float { 50% { transform: translateY(-8px); } }
 @keyframes sweep { to { transform: translateX(100%); } }
+
+/* ---------- Hero numbers band ---------- */
+/* A small data overlay at the bottom-right of the hero, floating directly on the video (no panel,
+   no lines). It stays in the hero's flex flow (pushed down by margin-top: auto), so it can never ride
+   up over the title or CTA on short screens. js/counter.js adds .is-armed / .is-visible for the entrance. */
+.hero-stats {
+  --hs-ease: cubic-bezier(.22, .61, .36, 1); --hs-rise: 8px;
+  margin-top: auto;
+  display: flex; justify-content: flex-end;
+  /* Right margin roughly mirrors the hero text's left margin (--edge), so the composition is balanced */
+  padding: 24px clamp(20px, 3vw, 50px) clamp(24px, 4vh, 45px) var(--edge);
+}
+.hero-stats-band {
+  width: min(48vw, 800px);
+  background: transparent; border: none; border-radius: 0; box-shadow: none;
+  -webkit-backdrop-filter: none; backdrop-filter: none;
+  text-align: left;
+}
+
+/* Wider tracks for the long values (33,612 / 100,000+), a narrow one for 25+ */
+.hero-stats-grid {
+  margin: 0; padding: 0; list-style: none;
+  display: grid; grid-template-columns: 1.25fr .75fr 1.25fr 1fr;
+  gap: 18px clamp(10px, 1.2vw, 20px); align-items: start;
+}
+.hero-stat { display: flex; flex-direction: column; gap: 9px; min-width: 0; text-align: left; }
+
+/* Every value is a single line at line-height 1, so numbers share a baseline and labels start level */
+.hero-stat-value {
+  font-size: clamp(1.75rem, 2.4vw, 2.75rem); font-weight: 700; line-height: 1; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums; white-space: nowrap; color: #FFFFFF;
+}
+.hero-stat-unit { margin-left: .4em; font-size: .42em; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #FFFFFF; }
+.hero-stat-label {
+  font-size: clamp(.66rem, .75vw, .8rem); font-weight: 700; line-height: 1.4; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(230, 244, 255, .75);
+}
+
+/* Laptop: a little wider */
+@media (max-width: 1279px) { .hero-stats-band { width: 54vw; } }
+
+/* Tablet: wider block, still four across */
+@media (max-width: 1024px) {
+  .hero-stats { padding-right: var(--edge); }
+  .hero-stats-band { width: 100%; }
+}
+
+/* Mobile: 2 + 2 under the hero text */
+@media (max-width: 640px) {
+  .hero-stats { justify-content: center; padding-top: 16px; padding-bottom: 20px; }
+  .hero-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
+  .hero-stat { gap: 7px; }
+  .hero-stat-value { font-size: clamp(1.5rem, 7.2vw, 1.9rem); }
+  .hero-stat-label { font-size: .64rem; }
+}
+
+/* Entrance: band → columns (100ms stagger) while the numbers count */
+.hero-stats.is-armed .hero-stats-band,
+.hero-stats.is-armed .hero-stat { opacity: 0; }
+
+.hero-stats.is-visible .hero-stats-band { animation: hs-fade .6s ease both; }
+.hero-stats.is-visible .hero-stat { animation: hs-rise .7s var(--hs-ease) calc(.25s + var(--i) * 100ms) both; }
+
+@keyframes hs-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hs-rise { from { opacity: 0; transform: translateY(var(--hs-rise)); } to { opacity: 1; transform: none; } }

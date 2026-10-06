@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="preload" as="image" href="Assets/Videos/hero-poster.jpg">
   <link rel="preload" as="image" href="Assets/logo/logo-web.png">
   <link rel="stylesheet" href="css/styles.css">
   <!-- Show the preloader only when JS can remove it; without JS the page shows straight away -->
@@ -16,6 +15,7 @@
   <script src="js/preloader.js" defer></script>
   <script src="js/hero.js" defer></script>
   <script src="js/nav.js" defer></script>
+  <script src="js/counter.js" defer></script>
 </head>
 <body>
 
@@ -49,12 +49,9 @@
 <main>
   <section class="hero" aria-labelledby="hero-title">
     <div class="hero-media" aria-hidden="true">
-      <!-- 4K HEVC original on large screens; 1080p H.264 copy for phones and browsers without HEVC -->
       <video class="hero-video" autoplay muted loop playsinline preload="auto"
-             poster="Assets/Videos/hero-poster.jpg"
              disablepictureinpicture disableremoteplayback tabindex="-1">
-        <source src="Assets/Videos/Hero%20section.MOV" type='video/mp4; codecs="hvc1"' media="(min-width: 1600px)">
-        <source src="Assets/Videos/hero-1080.mp4" type="video/mp4">
+        <source src="Assets/Videos/hero_section.mp4" type="video/mp4">
       </video>
       <div class="hero-overlay"></div>
     </div>
@@ -64,7 +61,32 @@
       <p class="hero-lead">A next-generation floating smart city combining luxury living, world-class amenities, sustainable innovation, and a journey across the globe.</p>
       <a class="btn btn--primary" href="#city">Explore the city <span aria-hidden="true">→</span></a>
     </div>
+
+    <div class="hero-stats">
+      <div class="hero-stats-band" role="group" aria-label="The city in numbers">
+        <ul class="hero-stats-grid">
+          <li class="hero-stat" style="--i:0">
+            <span class="hero-stat-value"><span class="counter" data-target="33612">33,612</span></span>
+            <span class="hero-stat-label">Luxury residences</span>
+          </li>
+          <li class="hero-stat" style="--i:1">
+            <span class="hero-stat-value"><span class="counter" data-target="25">25</span>+</span>
+            <span class="hero-stat-label">Decks</span>
+          </li>
+          <li class="hero-stat" style="--i:2">
+            <span class="hero-stat-value"><span class="counter" data-target="100000">100,000</span>+</span>
+            <span class="hero-stat-label">Safety capacity</span>
+          </li>
+          <li class="hero-stat" style="--i:3">
+            <span class="hero-stat-value"><span class="counter" data-target="2">2</span>M+<small class="hero-stat-unit">sq.ft</small></span>
+            <span class="hero-stat-label">Retail &amp; business</span>
+          </li>
+        </ul>
+      </div>
+    </div>
   </section>
+
+
 </main>
 
 </body>
