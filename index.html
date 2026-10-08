@@ -16,6 +16,9 @@
   <script src="js/hero.js" defer></script>
   <script src="js/nav.js" defer></script>
   <script src="js/counter.js" defer></script>
+  <script src="js/intro.js" defer></script>
+  <script src="js/about.js" defer></script>
+  <script src="js/life.js" defer></script>
 </head>
 <body>
 
@@ -26,32 +29,34 @@
   </div>
 </div>
 
-<header class="site-header">
-  <a class="brand" href="#" aria-label="Floating City Limited — City at Sea, home">
-    <img class="brand-logo" src="Assets/logo/logo-web.png" alt="Floating City Limited — City at Sea" width="480" height="437">
-  </a>
-  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
-    <span></span><span></span><span></span>
-  </button>
-  <nav class="site-nav" id="site-nav" aria-label="Main">
-    <a href="#" aria-current="page">Home</a>
-    <a href="#about">About</a>
-    <a href="#city">The City</a>
-    <a href="#life">Life at Sea</a>
-    <a href="#decks">Decks</a>
-    <a href="#technology">Technology</a>
-    <a href="#sustainability">Sustainability</a>
-    <a href="#investment">Investment</a>
-    <a href="#contact">Contact</a>
-  </nav>
-</header>
-
 <main>
   <section class="hero" aria-labelledby="hero-title">
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Floating City Limited — City at Sea, home">
+        <img class="brand-logo" src="Assets/logo/logo-web.png" alt="Floating City Limited — City at Sea" width="480" height="437">
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="site-nav" id="site-nav" aria-label="Main">
+        <a href="#" aria-current="page">Home</a>
+        <a href="#about">About</a>
+        <a href="#city">The City</a>
+        <a href="#life">Life at Sea</a>
+        <a href="#decks">Decks</a>
+        <a href="#technology">Technology</a>
+        <a href="#sustainability">Sustainability</a>
+        <a href="#investment">Investment</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
     <div class="hero-media" aria-hidden="true">
       <video class="hero-video" autoplay muted loop playsinline preload="auto"
              disablepictureinpicture disableremoteplayback tabindex="-1">
-        <source src="Assets/Videos/hero_section.mp4" type="video/mp4">
+        <!-- Dedicated cut for ≤ 768px; js/hero.js keeps this in sync on resize/rotation -->
+        <source src="Assets/Videos/responsive%20hero%20section.mp4" type="video/mp4" media="(max-width: 768px)">
+        <source src="Assets/Videos/hero_section.mp4" type="video/mp4" media="(min-width: 769px)">
       </video>
       <div class="hero-overlay"></div>
     </div>
@@ -70,7 +75,7 @@
             <span class="hero-stat-label">Luxury residences</span>
           </li>
           <li class="hero-stat" style="--i:1">
-            <span class="hero-stat-value"><span class="counter" data-target="25">25</span>+</span>
+            <span class="hero-stat-value"><span class="counter" data-target="25">     25</span>+</span>
             <span class="hero-stat-label">Decks</span>
           </li>
           <li class="hero-stat" style="--i:2">
@@ -81,11 +86,198 @@
             <span class="hero-stat-value"><span class="counter" data-target="2">2</span>M+<small class="hero-stat-unit">sq.ft</small></span>
             <span class="hero-stat-label">Retail &amp; business</span>
           </li>
+          <li class="hero-stat hero-stat--global" style="--i:4">
+            <span class="hero-stat-value hero-stat-value--word">Global</span>
+            <span class="hero-stat-label">Continuous voyage</span>
+          </li>
         </ul>
       </div>
     </div>
   </section>
 
+  <section class="about" id="about" aria-labelledby="about-title">
+    <div class="about-container" data-about-reveal>
+      <div class="about-content">
+        <p class="about-eyebrow"><span class="about-eyebrow-text">About Muziris</span></p>
+        <h2 class="about-title" id="about-title">
+          <span class="about-title-line"><span class="about-title-inner">Beyond a ship.</span></span>
+          <span class="about-title-line about-title-line--accent"><span class="about-title-inner">A city in motion.</span></span>
+        </h2>
+        <div class="about-body">
+          <p>Muziris represents a new vision for life at sea — a connected global city where people can live, work, discover and belong while journeying across the world.</p>
+          <p>Designed around people, possibility and progress, it reimagines the relationship between city life and the ocean.</p>
+        </div>
+        <ul class="about-features">
+          <li class="about-feature" style="--i:0">
+            <span class="about-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 14.2A4.5 4.5 0 0 1 21 18.5"/></svg></span>
+            <span class="about-feature-index">01</span>
+            <h3 class="about-feature-title">People</h3>
+            <p class="about-feature-text">A global community without borders.</p>
+          </li>
+          <li class="about-feature" style="--i:1">
+            <span class="about-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="2.5"/></svg></span>
+            <span class="about-feature-index">02</span>
+            <h3 class="about-feature-title">Possibilities</h3>
+            <p class="about-feature-text">New ways to live, work and grow.</p>
+          </li>
+          <li class="about-feature" style="--i:2">
+            <span class="about-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14Z"/><path d="M5 19l7-7"/></svg></span>
+            <span class="about-feature-index">03</span>
+            <h3 class="about-feature-title">Progress</h3>
+            <p class="about-feature-text">A cleaner, smarter future at sea.</p>
+          </li>
+          <li class="about-feature" style="--i:3">
+            <span class="about-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg></span>
+            <span class="about-feature-index">04</span>
+            <h3 class="about-feature-title">Connection</h3>
+            <p class="about-feature-text">Bridging cultures across the world.</p>
+          </li>
+        </ul>
+        <a class="about-cta" href="about.html">Discover our story <span class="about-cta-arrow" aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="about-collage">
+        <figure class="about-shot about-shot--main">
+          <img src="Assets/Images/about/journey.jpg" width="1060" height="1484" loading="lazy" decoding="async"
+               alt="Officers navigating Muziris from the bridge">
+          <figcaption class="about-shot-caption"><span class="about-shot-label">Our journey</span>A brighter tomorrow</figcaption>
+        </figure>
+        <figure class="about-shot about-shot--vision">
+          <img src="Assets/Images/about/vision.jpg" width="1672" height="941" loading="lazy" decoding="async"
+               alt="A terrace lounge aboard Muziris overlooking the sea at sunset">
+          <figcaption class="about-shot-caption"><span class="about-shot-index">01</span>Our vision</figcaption>
+        </figure>
+        <figure class="about-shot about-shot--home">
+          <img src="Assets/Images/about/ocean.jpg" width="1536" height="1024" loading="lazy" decoding="async"
+               alt="A suite aboard Muziris opening onto an ocean-view terrace">
+          <figcaption class="about-shot-caption"><span class="about-shot-index">02</span>A global home</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="life" id="life" aria-labelledby="life-title">
+    <div class="life-container" data-life-reveal>
+      <div class="life-head">
+        <div class="life-media" aria-hidden="true">
+          <img src="Assets/Images/life/aboard.jpg" width="1991" height="789" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="life-copy">
+          <p class="life-eyebrow">Life Aboard Muziris</p>
+          <h2 class="life-title" id="life-title">A world of experiences <span>at sea.</span></h2>
+          <p class="life-lead">From luxurious living and world-class dining to vibrant shopping, entertainment, wellness, healthcare and education — Muziris brings an extraordinary lifestyle to the ocean.</p>
+          <a class="life-cta" href="life.html"><span class="life-cta-icon" aria-hidden="true">→</span>Explore the city</a>
+        </div>
+      </div>
+
+      <ul class="life-grid">
+        <li class="life-card life-card--living" style="--i:0">
+          <a class="life-card-link" href="life.html#living">
+            <img src="Assets/Images/life/living.jpg" alt="" loading="lazy" decoding="async">
+            <span class="life-card-index">01</span>
+            <h3 class="life-card-title">Luxury Living</h3>
+            <p class="life-card-text">Extraordinary residences at sea.</p>
+            <span class="life-card-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li class="life-card life-card--dining" style="--i:1">
+          <a class="life-card-link" href="life.html#dining">
+            <img src="Assets/Images/life/dining.jpg" alt="" loading="lazy" decoding="async">
+            <span class="life-card-index">02</span>
+            <h3 class="life-card-title">Dining</h3>
+            <p class="life-card-text">A world of flavours across global cuisines.</p>
+            <span class="life-card-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li class="life-card life-card--shopping" style="--i:2">
+          <a class="life-card-link" href="life.html#shopping">
+            <img src="Assets/Images/life/shopping.jpg" alt="" loading="lazy" decoding="async">
+            <span class="life-card-index">03</span>
+            <h3 class="life-card-title">Shopping</h3>
+            <p class="life-card-text">Curated global brands at sea.</p>
+            <span class="life-card-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li class="life-card life-card--entertainment" style="--i:3">
+          <a class="life-card-link" href="life.html#entertainment">
+            <img src="Assets/Images/life/entertainment.jpg" alt="" loading="lazy" decoding="async">
+            <span class="life-card-index">04</span>
+            <h3 class="life-card-title">Entertainment</h3>
+            <p class="life-card-text">Unforgettable experiences day and night.</p>
+            <span class="life-card-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li class="life-card life-card--wellness" style="--i:4">
+          <a class="life-card-link" href="life.html#wellness">
+            <img src="Assets/Images/life/wellness.jpg" alt="" loading="lazy" decoding="async">
+            <span class="life-card-index">05</span>
+            <h3 class="life-card-title">Wellness</h3>
+            <p class="life-card-text">Rejuvenation for a healthier, happier you.</p>
+            <span class="life-card-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li class="life-card life-card--healthcare" style="--i:5">
+          <a class="life-card-link" href="life.html#healthcare">
+            <img src="Assets/Images/life/healthcare.jpg" alt="" loading="lazy" decoding="async">
+            <span class="life-card-index">06</span>
+            <h3 class="life-card-title">Healthcare</h3>
+            <p class="life-card-text">World-class medical care at sea.</p>
+            <span class="life-card-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li class="life-card life-card--education" style="--i:6">
+          <a class="life-card-link" href="life.html#education">
+            <img src="Assets/Images/life/education.jpg" alt="" loading="lazy" decoding="async">
+            <span class="life-card-index">07</span>
+            <h3 class="life-card-title">Education</h3>
+            <p class="life-card-text">Global learning for future generations.</p>
+            <span class="life-card-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="intro" id="city" aria-labelledby="intro-title">
+    <div class="intro-media" aria-hidden="true">
+      <video class="intro-video" muted loop playsinline preload="metadata"
+             disablepictureinpicture disableremoteplayback tabindex="-1">
+        <source src="Assets/Videos/muziris.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="intro-container">
+      <div class="intro-main" data-reveal>
+        <div class="intro-copy">
+          <p class="intro-eyebrow">Introducing Muziris</p>
+          <h2 class="intro-title" id="intro-title">A new way of <span class="intro-title-line">living <em>at sea.</em></span></h2>
+          <p class="intro-lead">Muziris is a next-generation floating city created for a life without conventional boundaries — bringing together refined living, global opportunity, intelligent infrastructure and extraordinary experiences across the world.</p>
+        </div>
+      </div>
+
+      <ol class="intro-pillars" data-reveal>
+        <li class="intro-pillar" style="--i:0">
+          <span class="intro-pillar-index">01</span>
+          <h3 class="intro-pillar-title">Live</h3>
+          <p class="intro-pillar-text">Extraordinary living on an ever-changing horizon.</p>
+        </li>
+        <li class="intro-pillar" style="--i:1">
+          <span class="intro-pillar-index">02</span>
+          <h3 class="intro-pillar-title">Work</h3>
+          <p class="intro-pillar-text">Global opportunity in a city designed for progress.</p>
+        </li>
+        <li class="intro-pillar" style="--i:2">
+          <span class="intro-pillar-index">03</span>
+          <h3 class="intro-pillar-title">Explore</h3>
+          <p class="intro-pillar-text">A world of destinations, cultures and experiences.</p>
+        </li>
+        <li class="intro-pillar" style="--i:3">
+          <span class="intro-pillar-index">04</span>
+          <h3 class="intro-pillar-title">Belong</h3>
+          <p class="intro-pillar-text">A connected global community without boundaries.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
 
 </main>
 

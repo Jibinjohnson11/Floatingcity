@@ -1,4 +1,4 @@
-// Navbar: glass deepens on scroll, active-section indicator, and hamburger menu for tablet and mobile.
+// Navbar (lives inside the hero and scrolls away with it): liquid-glass light follows the pointer, glass deepens on scroll, active-section indicator, and hamburger menu for tablet and mobile.
 (function () {
   'use strict';
 
@@ -17,6 +17,24 @@
     if (!ticking) { ticking = true; requestAnimationFrame(updateScrolled); }
   }, { passive: true });
   updateScrolled();
+
+  // Liquid glass: the specular highlight follows the pointer across the bar (mouse/trackpad only)
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var lightFrame = 0;
+    header.addEventListener('pointermove', function (e) {
+      if (lightFrame) return;
+      lightFrame = requestAnimationFrame(function () {
+        lightFrame = 0;
+        var r = header.getBoundingClientRect();
+        header.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        header.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+    header.addEventListener('pointerleave', function () {
+      header.style.removeProperty('--mx');
+      header.style.removeProperty('--my');
+    });
+  }
 
   // Active link: follows the section in view (sections are matched by the links' #ids)
   var links = Array.prototype.slice.call(nav.querySelectorAll('a'));

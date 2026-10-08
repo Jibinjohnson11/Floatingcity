@@ -10,6 +10,8 @@
   --white: #FFFFFF;
 
   --font: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Display / heading face: the exact stack the hero's MUZIRIS title renders in (it inherits --font) */
+  --heading-font: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
   --container: 1280px;
   --gutter: clamp(16px, 4vw, 48px);
 }
@@ -26,6 +28,9 @@ body {
 }
 
 a { color: inherit; text-decoration: none; }
+
+/* One heading typeface site-wide. Family only: each heading keeps its own size, weight and spacing. */
+h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
 
 .container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 var(--gutter); }
 
@@ -49,43 +54,52 @@ a { color: inherit; text-decoration: none; }
    The navbar below has its own --nav-* sizes and never changes the hero layout. */
 :root { --edge: 40px; --top: 30px; --logo-w: 130px; --logo-h: calc(var(--logo-w) * 437 / 480); }
 @media (max-width: 1024px) { :root { --edge: 30px; --top: 25px; --logo-w: 110px; } }
-@media (max-width: 640px)  { :root { --edge: 20px; --top: 20px; --logo-w: 90px; } }
+@media (max-width: 767px)  { :root { --edge: 20px; --top: 20px; --logo-w: 90px; } }
 
-/* Floating glass navbar. The glass lives on ::before (not the header itself) so the
-   mobile panel inside it can run its own backdrop blur. */
+/* Floating liquid-glass navbar, borderless. The glass lives on ::before (not the header itself) so the
+   mobile panel inside it can run its own backdrop blur: blur, saturation, sheen and a specular light
+   that follows the pointer. */
 :root {
   --nav-ocean: #0D3B66; --nav-sky: #00AEEF; --nav-aqua: #4FC3F7; --nav-ice: #E6F4FF; --nav-slate: #1B2E4B;
   --nav-offset: 16px; --nav-side: 24px; --nav-logo-h: 56px; --nav-ease: cubic-bezier(.22, .61, .36, 1);
 }
-@media (max-width: 640px) { :root { --nav-offset: 12px; --nav-side: 12px; --nav-logo-h: 48px; } }
-
-html { scroll-padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 40px); } /* anchors land below the bar */
+@media (max-width: 767px) { :root { --nav-offset: clamp(10px, 2svh, 16px); --nav-side: clamp(12px, 4vw, 20px); --nav-logo-h: 44px; } }
 
 .site-header {
-  position: fixed; z-index: 10;
+  --mx: 22%; --my: 0%; /* pointer light position, updated by js/nav.js */
+  /* Lives inside the hero and scrolls away with it; never follows the page */
+  position: absolute; z-index: 100;
   top: var(--nav-offset); left: var(--nav-side); right: var(--nav-side);
   max-width: 1240px; margin: 0 auto;
   display: flex; align-items: center; justify-content: space-between; gap: 32px;
-  padding: 8px 12px 8px 22px;
-  border-radius: 20px;
+  padding: 8px 14px 8px 26px;
+  border-radius: 999px;
 }
+.site-header::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; }
+
 .site-header::before {
-  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit;
-  background-color: rgba(230, 244, 255, .10);
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 70%); /* soft sheen, same in both states */
-  border: 1px solid rgba(255, 255, 255, .32);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 8px 32px rgba(13, 59, 102, .10); /* top-edge highlight + soft lift */
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
-          backdrop-filter: blur(12px) saturate(140%);
-  transition: background-color .4s var(--nav-ease), box-shadow .4s var(--nav-ease), border-color .4s var(--nav-ease),
+  background-color: transparent;
+  background-image:
+    radial-gradient(circle 140px at var(--mx) var(--my), rgba(255, 255, 255, .18), transparent 70%),  /* specular */
+    linear-gradient(180deg, rgba(255, 255, 255, .1) 0%, rgba(255, 255, 255, .02) 48%, rgba(255, 255, 255, 0) 52%, rgba(255, 255, 255, .03) 100%); /* curved-glass sheen */
+  box-shadow:
+    inset 0 0 14px rgba(255, 255, 255, .06),         /* thickness */
+    inset 0 -12px 22px -14px rgba(0, 174, 239, .18), /* liquid tint pooling at the base */
+    0 8px 24px rgba(13, 59, 102, .08);
+  -webkit-backdrop-filter: blur(4px) saturate(150%);
+          backdrop-filter: blur(4px) saturate(150%);
+  transition: background-color .4s var(--nav-ease), box-shadow .4s var(--nav-ease),
               -webkit-backdrop-filter .4s var(--nav-ease), backdrop-filter .4s var(--nav-ease);
 }
+
 .site-header.is-scrolled::before {
-  background-color: rgba(230, 244, 255, .55);
-  border-color: rgba(13, 59, 102, .10); /* navy hairline stays visible over light content */
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 10px 36px rgba(13, 59, 102, .14);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
-          backdrop-filter: blur(18px) saturate(150%);
+  background-color: rgba(230, 244, 255, .16);
+  box-shadow:
+    inset 0 0 14px rgba(255, 255, 255, .16),
+    inset 0 -12px 22px -14px rgba(0, 174, 239, .22),
+    0 10px 28px rgba(13, 59, 102, .1);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+          backdrop-filter: blur(8px) saturate(160%);
 }
 
 .brand { display: block; flex: none; line-height: 0; position: relative; z-index: 2; border-radius: 8px; }
@@ -117,7 +131,7 @@ html { scroll-padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 40px); }
 
 /* Tablet / mobile: hamburger + frosted panel dropping from the bar */
 @media (max-width: 1100px) {
-  .site-header { padding: 6px 6px 6px 16px; }
+  .site-header { padding: 6px 8px 6px 20px; }
   .nav-toggle { display: block; }
   .site-nav {
     position: absolute; top: calc(100% + 10px); left: 0; right: 0;
@@ -125,7 +139,6 @@ html { scroll-padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 40px); }
     max-height: calc(100svh - var(--nav-offset) - var(--nav-logo-h) - 40px); overflow-y: auto;
     padding: 10px; border-radius: 20px;
     background: rgba(230, 244, 255, .82);
-    border: 1px solid rgba(255, 255, 255, .5);
     box-shadow: 0 18px 48px rgba(13, 59, 102, .18);
     -webkit-backdrop-filter: blur(22px) saturate(160%);
             backdrop-filter: blur(22px) saturate(160%);
@@ -198,45 +211,6 @@ html { scroll-padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 40px); }
 
 .btn--primary { text-transform: uppercase; letter-spacing: .12em; font-size: .85rem; }
 
-/* Tablet */
-@media (max-width: 1024px) {
-  .hero-content > * { max-width: 440px; }
-  .hero-overlay {
-    background:
-      linear-gradient(100deg, rgba(13, 59, 102, .55) 0%, rgba(13, 59, 102, .28) 32%, transparent 52%);
-  }
-}
-
-/* Mobile: text sits over the sky; the crop keeps the towers and dome in frame */
-@media (max-width: 640px) {
-  .hero-overlay {
-    background: linear-gradient(180deg, rgba(13, 59, 102, .55) 0%, rgba(13, 59, 102, .28) 34%, transparent 52%);
-  }
-  .hero-content > * { max-width: 100%; }
-  .hero-title { font-size: clamp(2.6rem, 13vw, 3.4rem); }
-  .hero-eyebrow { font-size: .7rem; letter-spacing: .26em; }
-  .hero-lead { font-size: .95rem; margin-bottom: 1.6em; }
-  /* On short phones the text can reach the ship's deck; a soft local shadow keeps it legible
-     without tinting the video */
-  .hero-title span, .hero-lead { text-shadow: 0 1px 14px rgba(13, 59, 102, .6); }
-}
-
-/* Small mobile: tighter tracking so CITY AT SEA keeps its rhythm in a narrow column */
-@media (max-width: 479px) {
-  .hero-title span { letter-spacing: .42em; }
-  .hero-lead { font-size: .93rem; line-height: 1.65; }
-}
-
-/* Landscape phones: drop the tall minimum so the hero is one screen, and tighten the
-   vertical rhythm so all content fits under the navbar */
-@media (orientation: landscape) and (max-height: 540px) {
-  .hero { min-height: 340px; padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 16px + clamp(20px, 6vh, 36px)); }
-  .hero-title { font-size: clamp(2.2rem, 11vh, 3.4rem); margin-bottom: .4em; }
-  .hero-title span { margin-top: .45em; }
-  .hero-lead { font-size: .9rem; line-height: 1.55; margin-bottom: 1.2em; max-width: min(440px, 55vw); }
-  .hero-title span, .hero-lead { text-shadow: 0 1px 14px rgba(13, 59, 102, .6); }
-}
-
 @media (prefers-reduced-motion: no-preference) {
   .hero-content > * { animation: rise .9s ease both; }
   .hero-content > :nth-child(2) { animation-delay: .1s; }
@@ -307,6 +281,8 @@ html { scroll-padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 40px); }
   gap: 18px clamp(10px, 1.2vw, 20px); align-items: start;
 }
 .hero-stat { display: flex; flex-direction: column; gap: 9px; min-width: 0; text-align: left; }
+/* GLOBAL appears only in the mobile cluster (≤ 768px); desktop shows the four figures */
+.hero-stat--global { display: none; }
 
 /* Every value is a single line at line-height 1, so numbers share a baseline and labels start level */
 .hero-stat-value {
@@ -322,19 +298,129 @@ html { scroll-padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 40px); }
 /* Laptop: a little wider */
 @media (max-width: 1279px) { .hero-stats-band { width: 54vw; } }
 
-/* Tablet: wider block, still four across */
-@media (max-width: 1024px) {
+/* ---------- Hero: responsive ---------- */
+/* Desktop (> 1024px) is the base above. Three ranges adapt it:
+   tablet 768–1024 · phone ≤ 767 (portrait video) · small phone ≤ 374, plus short landscape screens.
+   On phones the hero reads top to bottom: text over the sky → a window for the ship → counters over
+   the water. The window is real layout space (padding under the text), so nothing overlaps and the
+   hero simply grows taller than the screen when it needs to. */
+
+/* Tablet: 768–1024 */
+@media (min-width: 768px) and (max-width: 1024px) {
+  :root { --edge: clamp(40px, 6vw, 64px); }
+  .hero-content { width: min(58%, 620px); }
+  .hero-content > * { max-width: 100%; }
+  .hero-title { font-size: clamp(4rem, 7.5vw, 5rem); }
+  .hero-lead { font-size: clamp(1rem, 1.8vw, 1.2rem); max-width: 34em; }
+  .hero-overlay {
+    background: linear-gradient(100deg, rgba(13, 59, 102, .55) 0%, rgba(13, 59, 102, .28) 34%, transparent 56%);
+  }
+  /* Counters: full width, four across (there is room for 100,000+ at every tablet width) */
   .hero-stats { padding-right: var(--edge); }
   .hero-stats-band { width: 100%; }
 }
 
-/* Mobile: 2 + 2 under the hero text */
-@media (max-width: 640px) {
-  .hero-stats { justify-content: center; padding-top: 16px; padding-bottom: 20px; }
-  .hero-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; }
-  .hero-stat { gap: 7px; }
-  .hero-stat-value { font-size: clamp(1.5rem, 7.2vw, 1.9rem); }
-  .hero-stat-label { font-size: .64rem; }
+/* Phones: ≤ 767 */
+@media (max-width: 767px) {
+  :root { --edge: max(clamp(20px, 5.5vw, 32px), env(safe-area-inset-left), env(safe-area-inset-right)); }
+
+  /* Compact floating bar: 44px logo, 38px toggle (≈ 56px tall) so it never dominates the video */
+  .site-header { padding: 6px 6px 6px clamp(16px, 4.5vw, 24px); }
+  .nav-toggle { width: 38px; height: 38px; border-radius: 10px; }
+  .nav-toggle span { left: 10px; right: 10px; }
+  .nav-toggle span:nth-child(1) { top: 13px; }
+  .nav-toggle span:nth-child(2) { top: 18.5px; }
+  .nav-toggle span:nth-child(3) { top: 24px; }
+
+  .hero { padding-top: clamp(150px, 23svh, 230px); }
+  .hero-overlay {
+    background: linear-gradient(180deg, rgba(13, 59, 102, .55) 0%, rgba(13, 59, 102, .28) 38%, transparent 58%);
+  }
+  /* padding-bottom is the ship window between the CTA and the counters */
+  .hero-content { padding: 0 var(--edge) clamp(220px, 36svh, 400px); }
+  .hero-content > * { max-width: 100%; }
+
+  .hero-title { font-size: clamp(3.4rem, 14vw, 5.2rem); line-height: .9; margin-bottom: clamp(26px, 4.5svh, 48px); }
+  .hero-title span {
+    margin-top: clamp(12px, 2svh, 20px);
+    font-size: clamp(1.1rem, 4.6vw, 1.5rem); letter-spacing: clamp(.28em, 2vw, .48em);
+  }
+  /* ~30–38 characters per line */
+  .hero-lead { max-width: 36ch; font-size: clamp(.95rem, 4vw, 1.15rem); line-height: 1.6; margin-bottom: clamp(24px, 3.5svh, 36px); }
+  .hero-title span, .hero-lead { text-shadow: 0 1px 14px rgba(13, 59, 102, .6); }
+  .hero-content .btn--primary {
+    width: fit-content; max-width: 100%;
+    padding: clamp(14px, 2svh, 18px) clamp(24px, 7vw, 36px);
+    font-size: clamp(.78rem, 3.4vw, .9rem);
+  }
+}
+
+/* Large phones: a little more air, not bigger type */
+@media (min-width: 430px) and (max-width: 767px) {
+  :root { --edge: max(clamp(28px, 7vw, 44px), env(safe-area-inset-left), env(safe-area-inset-right)); }
+  .hero-title { font-size: clamp(4.2rem, 13vw, 5.6rem); }
+}
+
+/* Small phones: ≤ 374 */
+@media (max-width: 374px) {
+  :root { --edge: max(18px, env(safe-area-inset-left), env(safe-area-inset-right)); }
+  .hero-title { font-size: clamp(3rem, 14vw, 3.8rem); }
+  .hero-title span { letter-spacing: .32em; }
+  .hero-lead { font-size: .95rem; line-height: 1.55; }
+  .hero-content .btn--primary { font-size: .78rem; padding: 14px 24px; }
+}
+
+/* Short landscape screens (phones on their side): no ship window, tighter rhythm, and the hero
+   grows rather than letting navbar, text and counters collide */
+@media (orientation: landscape) and (max-height: 600px) {
+  .hero { min-height: max(100svh, 340px); padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 16px + clamp(20px, 6vh, 36px)); }
+  .hero-content { width: auto; padding-bottom: 24px; }
+  .hero-content > * { max-width: min(480px, 55vw); }
+  .hero-title { font-size: clamp(2.4rem, 11vh, 3.6rem); line-height: .95; margin-bottom: .4em; }
+  .hero-title span { margin-top: .45em; font-size: .3em; letter-spacing: .42em; }
+  .hero-lead { font-size: .9rem; line-height: 1.55; margin-bottom: 1.2em; }
+  .hero-title span, .hero-lead { text-shadow: 0 1px 14px rgba(13, 59, 102, .6); }
+  .hero-stats { padding-top: 8px; padding-bottom: 20px; }
+  .hero-stats-band { width: 100%; }
+  .hero-stats-grid { grid-template-columns: 1.25fr .75fr 1.25fr 1fr; gap: 12px clamp(14px, 3vw, 28px); }
+  .hero-stat-value { font-size: clamp(1.5rem, 4vw, 2rem); }
+  .hero-stat-label { font-size: .62rem; }
+}
+
+/* Counters on phones and small tablets (≤ 768px): one small centred cluster, 3 + 2.
+   Six grid tracks let row two sit centred under row one (cols 2–3 and 4–5). Placed after the
+   landscape rule so it wins at these widths. */
+@media (max-width: 768px) {
+  .hero-stats { justify-content: center; padding: 0 16px max(clamp(22px, 4svh, 36px), env(safe-area-inset-bottom)); }
+  .hero-stats-band { width: 100%; max-width: 500px; text-align: center; }
+
+  .hero-stats-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px 8px; }
+  .hero-stat { gap: 7px; align-items: center; text-align: center; }
+  .hero-stat:nth-child(1) { grid-column: 1 / 3; }
+  .hero-stat:nth-child(2) { grid-column: 3 / 5; }
+  .hero-stat:nth-child(3) { grid-column: 5 / 7; }
+  .hero-stat:nth-child(4) { grid-column: 2 / 4; }
+  .hero-stat--global { display: flex; grid-column: 4 / 6; }
+
+  .hero-stat-value { font-size: clamp(1.15rem, 5vw, 1.5rem); font-weight: 600; line-height: 1; }
+  .hero-stat-value--word { text-transform: uppercase; }
+  .hero-stat-unit { margin-left: .35em; font-size: .4em; }
+  .hero-stat-label { font-size: clamp(.46rem, 1.8vw, .58rem); letter-spacing: .1em; line-height: 1.35; }
+}
+/* Below 390px: slightly smaller figures, tighter columns, same 3 + 2 */
+@media (max-width: 389px) {
+  .hero-stats { padding-left: 12px; padding-right: 12px; }
+  .hero-stats-grid { column-gap: 6px; }
+  .hero-stat-value { font-size: 1.1rem; }
+}
+/* Too narrow for three across: centred 2 + 2 + 1 */
+@media (max-width: 329px) {
+  .hero-stats-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hero-stat:nth-child(1) { grid-column: 1 / 3; }
+  .hero-stat:nth-child(2) { grid-column: 3 / 5; }
+  .hero-stat:nth-child(3) { grid-column: 1 / 3; }
+  .hero-stat:nth-child(4) { grid-column: 3 / 5; }
+  .hero-stat--global { grid-column: 2 / 4; }
 }
 
 /* Entrance: band → columns (100ms stagger) while the numbers count */
@@ -342,7 +428,489 @@ html { scroll-padding-top: calc(var(--nav-offset) + var(--nav-logo-h) + 40px); }
 .hero-stats.is-armed .hero-stat { opacity: 0; }
 
 .hero-stats.is-visible .hero-stats-band { animation: hs-fade .6s ease both; }
+.hero-stats.is-visible .hero-stat-value--word { animation: hs-word .8s var(--hs-ease) .65s both; }
 .hero-stats.is-visible .hero-stat { animation: hs-rise .7s var(--hs-ease) calc(.25s + var(--i) * 100ms) both; }
 
 @keyframes hs-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes hs-word {
+  from { opacity: 0; transform: translateY(8px); letter-spacing: .08em; }
+  to { opacity: 1; transform: none; letter-spacing: normal; }
+}
 @keyframes hs-rise { from { opacity: 0; transform: translateY(var(--hs-rise)); } to { opacity: 1; transform: none; } }
+
+/* ---------- Introducing Muziris ---------- */
+/* The editorial chapter after the hero, set directly over muziris.mp4: the introduction
+   on the left with the film open to the right, then Live / Work / Explore / Belong as one quiet row.
+   js/intro.js plays the film and adds .is-armed / .is-visible to each [data-reveal] group for the entrance. */
+.intro {
+  /* Light-on-dark palette for the video background */
+  --in-ocean: #FFFFFF; --in-sky: #4FC3F7; --in-slate: #1B2E4B; --in-gray: rgba(230, 244, 255, .66); --in-body: rgba(230, 244, 255, .84);
+  --in-ease: cubic-bezier(.22, .61, .36, 1);
+  --in-container: min(90vw, 1380px);
+  position: relative; overflow: hidden; isolation: isolate;
+  padding: clamp(90px, 9vw, 150px) 0 clamp(70px, 7vw, 110px);
+  background: #0B2948; /* shows until the video's first frame */
+  color: var(--in-ocean);
+}
+
+/* Background film, shown exactly as shot: no overlay, tint or filter. Content sits above it. */
+.intro-media { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.intro-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 1; filter: none; pointer-events: none; }
+.intro-video::-webkit-media-controls,
+.intro-video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
+
+.intro-container { position: relative; z-index: 2; width: var(--in-container); margin: 0 auto; }
+/* Readability over the untinted film comes from the text itself, not a layer */
+.intro-eyebrow, .intro-title, .intro-lead,
+.intro-pillar-index, .intro-pillar-title, .intro-pillar-text { text-shadow: 0 2px 12px rgba(0, 25, 45, .25); }
+
+.intro-main { max-width: 620px; }
+
+.intro-eyebrow {
+  margin: 0 0 28px; display: flex; align-items: center; gap: 14px;
+  font-size: 11px; font-weight: 600; letter-spacing: .25em; text-transform: uppercase; color: var(--in-sky);
+}
+.intro-eyebrow::before { content: ""; flex: none; width: 32px; height: 1px; background: var(--in-sky); }
+
+/* Editorial statement; kept below the hero title's size */
+.intro-title {
+  margin: 0 0 32px;
+  font-size: clamp(2.6rem, 3.7vw, 3.6rem); font-weight: 600; line-height: .98; letter-spacing: -.04em;
+  color: var(--in-ocean);
+}
+.intro-title-line { display: block; }
+.intro-title em { font-style: normal; font-weight: 500; color: var(--in-sky); }
+
+.intro-lead {
+  margin: 0; max-width: 500px;
+  font-size: clamp(1rem, 1.15vw, 1.15rem); line-height: 1.75; font-weight: 400; color: var(--in-body);
+}
+
+/* Live / Work / Explore / Belong: one row under a single hairline, no cards */
+.intro-pillars {
+  margin: clamp(70px, 7vw, 110px) 0 0; padding: clamp(32px, 3.5vw, 48px) 0 0; list-style: none;
+  border-top: 1px solid rgba(230, 244, 255, .18);
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(30px, 4vw, 70px);
+}
+.intro-pillar-index { display: block; margin-bottom: 14px; font-size: 10px; font-weight: 600; letter-spacing: .15em; color: var(--in-sky); }
+.intro-pillar-title {
+  margin: 0 0 12px;
+  font-size: clamp(1.15rem, 1.5vw, 1.45rem); font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--in-ocean); transition: color .3s ease;
+}
+.intro-pillar-text { margin: 0; max-width: 230px; font-size: .86rem; line-height: 1.6; color: var(--in-gray); transition: color .3s ease; }
+
+@media (hover: hover) {
+  .intro-pillar:hover .intro-pillar-title { color: var(--in-sky); }
+  .intro-pillar:hover .intro-pillar-text { color: rgba(230, 244, 255, .92); }
+}
+
+/* Tablet / small laptop: pillars 2 × 2 */
+@media (max-width: 1179px) {
+  .intro-eyebrow { margin-bottom: 20px; }
+  .intro-title { font-size: clamp(2.2rem, 4.6vw, 2.8rem); margin-bottom: 24px; }
+  .intro-pillars { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
+}
+
+/* Mobile: copy, then the pillars stacked */
+@media (max-width: 700px) {
+  .intro { padding: 72px 0 64px; }
+  .intro-container { width: calc(100% - 44px); }
+  .intro-title { font-size: clamp(2.3rem, 10vw, 2.8rem); }
+  .intro-pillars { grid-template-columns: 1fr; gap: 32px; margin-top: 56px; padding-top: 32px; }
+  .intro-pillar-text { max-width: 320px; }
+}
+
+/* Entrance (only once js/intro.js arms a group) */
+[data-reveal].is-armed .intro-eyebrow,
+[data-reveal].is-armed .intro-title,
+[data-reveal].is-armed .intro-lead,
+[data-reveal].is-armed .intro-pillar { opacity: 0; }
+
+[data-reveal].is-visible .intro-eyebrow { animation: in-rise .8s var(--in-ease) both; --in-rise: 10px; }
+[data-reveal].is-visible .intro-title { animation: in-rise .9s var(--in-ease) .1s both; --in-rise: 20px; }
+[data-reveal].is-visible .intro-lead { animation: in-rise .9s var(--in-ease) .3s both; --in-rise: 14px; }
+[data-reveal].is-visible .intro-pillar { animation: in-rise .8s var(--in-ease) calc(var(--i) * 100ms) both; --in-rise: 14px; }
+
+@keyframes in-rise { from { opacity: 0; transform: translateY(var(--in-rise)); } to { opacity: 1; transform: none; } }
+
+/* ---------- About Muziris (home preview) ---------- */
+/* Editorial split on white: the story on the left (~45%), a three-image collage on the right (~55%).
+   Desktop aims for one screen; tablet and mobile stack and grow naturally.
+   js/about.js adds .is-armed / .is-visible for the entrance. */
+.about {
+  --ab-ocean: #0D3B66; --ab-sky: #00AEEF; --ab-aqua: #4FC3F7; --ab-ice: #E6F4FF; --ab-slate: #1B2E4B; --ab-gray: #8CA3B8;
+  --ab-ease: cubic-bezier(.22, 1, .36, 1);
+  --ab-gap: clamp(14px, 1.2vw, 18px);
+  --ab-rise-y: 18px; --ab-title-y: 32px; /* entrance travel; shortened on tablet and mobile */
+  position: relative; box-sizing: border-box; width: 100%;
+  min-height: 100vh; min-height: 100svh;
+  display: flex; align-items: center;
+  padding: clamp(40px, 6vh, 90px) clamp(24px, 4vw, 72px);
+  background: #FFFFFF;
+  color: var(--ab-ocean);
+}
+.about-container {
+  width: 100%; max-width: 1500px; margin: 0 auto;
+  display: grid; grid-template-columns: 45fr 55fr; align-items: center;
+  column-gap: clamp(40px, 4.5vw, 84px);
+}
+
+/* ---- Story ---- */
+.about-eyebrow {
+  display: flex; align-items: center; gap: 14px; margin: 0 0 clamp(16px, 2.6vh, 26px);
+  font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--ab-sky);
+}
+.about-eyebrow::before { content: ""; flex: none; width: 36px; height: 1px; background: var(--ab-sky); }
+.about-eyebrow-text { display: inline-block; }
+
+.about-title {
+  margin: 0;
+  font-size: clamp(2.4rem, min(3.8vw, 7vh), 4.4rem); font-weight: 700; line-height: 1; letter-spacing: -.025em; text-transform: uppercase;
+}
+/* Each line is a mask its text rises into; the small padding keeps glyph edges from being clipped */
+.about-title-line { display: block; overflow: hidden; padding-bottom: .06em; margin-bottom: -.06em; color: var(--ab-ocean); }
+.about-title-line--accent { color: var(--ab-sky); }
+.about-title-inner { display: block; }
+
+.about-body { max-width: 520px; margin-top: clamp(18px, 3vh, 30px); }
+.about-body p { margin: 0; font-size: clamp(.95rem, 1.05vw, 1.08rem); line-height: 1.7; color: rgba(27, 46, 75, .78); }
+.about-body p + p { margin-top: clamp(10px, 1.6vh, 16px); }
+
+/* Four compact feature columns split by hairlines */
+.about-features {
+  list-style: none; margin: clamp(22px, 3.6vh, 38px) 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.about-feature { padding: 0 clamp(10px, 1vw, 18px); border-left: 1px solid rgba(140, 163, 184, .45); }
+.about-feature:first-child { padding-left: 0; border-left: 0; }
+.about-feature-icon {
+  display: grid; place-items: center; width: clamp(36px, 2.8vw, 42px); aspect-ratio: 1; margin-bottom: 12px;
+  border-radius: 50%; background: var(--ab-ice); color: var(--ab-sky);
+}
+.about-feature-icon svg { width: 52%; height: 52%; }
+.about-feature-index { display: block; font-size: 10px; font-weight: 600; letter-spacing: .16em; color: var(--ab-gray); }
+.about-feature-title {
+  margin: 4px 0 0; font-size: clamp(.66rem, .7vw, .78rem); font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ab-ocean); overflow-wrap: anywhere;
+}
+.about-feature-text { margin: 6px 0 0; font-size: clamp(.72rem, .78vw, .82rem); line-height: 1.5; color: rgba(27, 46, 75, .7); }
+
+/* Gradient pill CTA */
+.about-cta {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: inline-flex; align-items: center; gap: 14px; margin-top: clamp(24px, 4vh, 40px);
+  padding: 15px 22px 15px 28px; border-radius: 999px;
+  background: linear-gradient(90deg, var(--ab-ocean), var(--ab-sky));
+  color: #FFFFFF; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+}
+/* Hover: a deeper gradient fades in underneath the label */
+.about-cta::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0;
+  background: linear-gradient(90deg, #0A2F52, #0096CF); transition: opacity .4s ease;
+}
+.about-cta-arrow { display: inline-block; font-size: 15px; letter-spacing: 0; transition: transform .3s ease; }
+.about-cta:hover::before, .about-cta:focus-visible::before { opacity: 1; }
+.about-cta:hover .about-cta-arrow, .about-cta:focus-visible .about-cta-arrow { transform: translateX(4px); }
+.about-cta:focus-visible { outline: 2px solid var(--ab-sky); outline-offset: 4px; }
+
+/* ---- Collage: one large image, two stacked beside it ---- */
+.about-collage {
+  display: grid; gap: var(--ab-gap);
+  grid-template-columns: 65fr 35fr; grid-template-rows: 1fr 1fr;
+  height: clamp(440px, 74vh, 760px);
+}
+.about-shot { position: relative; overflow: hidden; margin: 0; border-radius: 14px; background: var(--ab-ice); }
+.about-shot--main { grid-row: span 2; }
+.about-shot img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ab-ease); }
+/* Framing per photo so the subject survives each crop */
+.about-shot--main img { object-position: 40% 45%; }   /* officers at the bridge console */
+.about-shot--vision img { object-position: 68% 60%; } /* terrace lounge against the sunset sea */
+.about-shot--home img { object-position: 42% 62%; }   /* the suite's bed and ocean view */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .about-shot:hover img { transform: scale(1.025); }
+}
+/* Light scrims only where captions sit */
+.about-shot::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.about-shot--main::after { background: linear-gradient(160deg, rgba(13, 30, 52, .55) 0%, rgba(13, 30, 52, 0) 38%); }
+.about-shot--vision::after, .about-shot--home::after { background: linear-gradient(0deg, rgba(13, 30, 52, .62) 0%, rgba(13, 30, 52, 0) 52%); }
+
+.about-shot-caption {
+  position: absolute; z-index: 1; color: #FFFFFF;
+  font-size: clamp(.8rem, .95vw, 1rem); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1.3;
+}
+.about-shot--main .about-shot-caption { top: clamp(18px, 2vw, 30px); left: clamp(18px, 2vw, 30px); max-width: 60%; }
+.about-shot--vision .about-shot-caption, .about-shot--home .about-shot-caption { left: clamp(14px, 1.4vw, 22px); bottom: clamp(14px, 1.4vw, 22px); }
+.about-shot-label {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+  font-size: 10px; letter-spacing: .24em; color: var(--ab-aqua);
+}
+.about-shot-label::before { content: ""; width: 22px; height: 1px; background: var(--ab-aqua); }
+.about-shot-index { display: block; margin-bottom: 4px; font-size: 10px; letter-spacing: .18em; color: var(--ab-aqua); }
+
+/* Narrower laptops: four columns get too tight for "Possibilities", so the features go 2×2 */
+@media (min-width: 1101px) and (max-width: 1360px) {
+  .about-features { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: clamp(14px, 2.2vh, 22px); }
+  .about-feature:nth-child(3) { padding-left: 0; border-left: 0; }
+  .about-feature-icon { margin-bottom: 8px; }
+}
+
+/* Short laptop screens: a step more compact so the section stays on one screen */
+@media (min-width: 1101px) and (max-height: 800px) {
+  .about { padding-block: clamp(28px, 4vh, 44px); }
+  .about-title { font-size: clamp(2.1rem, min(3.3vw, 6.4vh), 3.4rem); }
+  .about-body p { font-size: .92rem; line-height: 1.6; }
+  .about-feature-icon { width: 34px; margin-bottom: 8px; }
+  .about-cta { padding-block: 13px; }
+  .about-collage { height: clamp(400px, 78vh, 620px); }
+}
+
+/* Tablet: stack the story over the collage; features stay in one row */
+@media (max-width: 1100px) {
+  .about { --ab-rise-y: 14px; --ab-title-y: 20px; min-height: 0; padding: clamp(64px, 8vh, 96px) clamp(24px, 4vw, 40px); }
+  .about-container { grid-template-columns: 1fr; row-gap: clamp(40px, 6vh, 56px); }
+  .about-title { font-size: clamp(2.4rem, 6vw, 3.4rem); }
+  .about-body { max-width: 620px; }
+  .about-collage { height: clamp(380px, 56vw, 560px); }
+}
+
+/* Mobile: 2×2 features; the large image on top with the two small ones side by side */
+@media (max-width: 767px) {
+  .about { --ab-rise-y: 12px; --ab-title-y: 16px; padding: 72px 20px 80px; }
+  .about-title { font-size: clamp(2.2rem, 10vw, 3rem); }
+  .about-features { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
+  .about-feature:nth-child(3) { padding-left: 0; border-left: 0; }
+  .about-feature-title { font-size: .74rem; }
+  .about-feature-text { font-size: .8rem; }
+  .about-collage { height: auto; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 12px; }
+  .about-shot--main { grid-row: auto; grid-column: span 2; aspect-ratio: 4 / 3; }
+  .about-shot--vision, .about-shot--home { aspect-ratio: 1; }
+  .about-shot { border-radius: 12px; }
+  .about-shot-caption { font-size: .78rem; }
+}
+
+/* Entrance (only once js/about.js arms the section). Story: label → heading lines → copy → features → CTA;
+   collage: main image, then each small image 150ms apart. Opacity and transform only; without JS or with
+   reduced motion nothing is armed and everything simply shows. */
+[data-about-reveal].is-armed .about-eyebrow-text,
+[data-about-reveal].is-armed .about-title-inner,
+[data-about-reveal].is-armed .about-body p,
+[data-about-reveal].is-armed .about-feature,
+[data-about-reveal].is-armed .about-cta,
+[data-about-reveal].is-armed .about-shot { opacity: 0; }
+[data-about-reveal].is-armed .about-eyebrow::before { transform: scaleX(0); }
+
+[data-about-reveal].is-visible .about-eyebrow::before { transform-origin: left; animation: ab-line .6s var(--ab-ease) .1s both; }
+[data-about-reveal].is-visible .about-eyebrow-text { animation: ab-rise .7s var(--ab-ease) .2s both; }
+[data-about-reveal].is-visible .about-title-inner { animation: ab-rise .9s var(--ab-ease) .3s both; --ab-rise: var(--ab-title-y); }
+[data-about-reveal].is-visible .about-title-line + .about-title-line .about-title-inner { animation-delay: .45s; }
+[data-about-reveal].is-visible .about-body p { animation: ab-rise .8s var(--ab-ease) .6s both; }
+[data-about-reveal].is-visible .about-body p + p { animation-delay: .72s; }
+[data-about-reveal].is-visible .about-feature { animation: ab-rise .75s var(--ab-ease) both; animation-delay: calc(.85s + var(--i) * 90ms); }
+[data-about-reveal].is-visible .about-cta { animation: ab-rise .7s var(--ab-ease) 1.2s both; }
+
+[data-about-reveal].is-visible .about-shot { animation: ab-reveal 1.1s var(--ab-ease) .15s both; }
+[data-about-reveal].is-visible .about-shot--vision { animation-delay: .3s; }
+[data-about-reveal].is-visible .about-shot--home { animation-delay: .45s; }
+
+@keyframes ab-rise { from { opacity: 0; transform: translateY(var(--ab-rise, var(--ab-rise-y))); } to { opacity: 1; transform: none; } }
+@keyframes ab-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ab-reveal { from { opacity: 0; transform: scale(1.03); } to { opacity: 1; transform: none; } }
+
+/* ---------- Life Aboard Muziris ---------- */
+/* An editorial intro over a wide deck image that fades into the page, then a 3 + 4 mosaic of experience cards.
+   Desktop (≥1024px) is exactly one viewport tall and every part is sized from the space it is given;
+   tablet and mobile let it grow and reflow. js/life.js adds .is-armed / .is-visible for the entrance. */
+.life {
+  --lf-ocean: #0D3B66; --lf-sky: #00AEEF; --lf-slate: #1B2E4B; --lf-body: #526A80;
+  --lf-ease: cubic-bezier(.22, .61, .36, 1);
+  --lf-gap: clamp(7px, .8vw, 12px);
+  position: relative; box-sizing: border-box; width: 100%; overflow: hidden;
+  padding: clamp(35px, 5vh, 70px) clamp(24px, 4vw, 64px);
+  background: #FFFFFF;
+  color: var(--lf-ocean);
+}
+.life-container { width: min(100%, 1500px); margin-inline: auto; }
+
+/* Intro: copy on the left, the deck image filling the right of the same band */
+.life-head { position: relative; display: flex; align-items: center; }
+.life-media { overflow: hidden; }
+.life-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 72% 55%; }
+/* Fades the photograph into the gradient on its left and bottom edges (a mask, so it works over any background) */
+.life-media {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, .4) 18%, #000 42%), linear-gradient(0deg, transparent 0%, #000 22%);
+          mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, .4) 18%, #000 42%), linear-gradient(0deg, transparent 0%, #000 22%);
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+}
+
+.life-copy { position: relative; z-index: 2; max-width: 540px; }
+.life-eyebrow {
+  display: flex; align-items: center; gap: 18px; margin: 0 0 clamp(14px, 2.4vh, 26px);
+  font-size: 11px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--lf-sky);
+}
+.life-eyebrow::before { content: ""; flex: none; width: 36px; height: 1px; background: var(--lf-sky); }
+.life-title {
+  margin: 0; max-width: 12ch;
+  font-size: clamp(2.4rem, min(4vw, 7vh), 4.8rem); font-weight: 600; line-height: 1; letter-spacing: -.035em; color: var(--lf-ocean);
+}
+.life-title span { color: var(--lf-sky); }
+.life-lead { max-width: 460px; margin: clamp(14px, 2.4vh, 26px) 0 0; font-size: clamp(.92rem, 1vw, 1.02rem); line-height: 1.65; color: var(--lf-body); }
+
+.life-cta {
+  display: inline-flex; align-items: center; gap: 18px; margin-top: clamp(16px, 2.8vh, 30px);
+  font-size: 11px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--lf-slate);
+  transition: color .3s ease;
+}
+.life-cta-icon {
+  display: grid; place-items: center; width: clamp(38px, 5vh, 44px); aspect-ratio: 1; border: 1px solid rgba(27, 46, 75, .55); border-radius: 50%;
+  font-size: 16px; letter-spacing: 0; transition: border-color .3s ease, background-color .3s ease, color .3s ease;
+}
+.life-cta:hover, .life-cta:focus-visible { color: var(--lf-sky); }
+.life-cta:hover .life-cta-icon, .life-cta:focus-visible .life-cta-icon { border-color: var(--lf-sky); background: var(--lf-sky); color: #FFFFFF; }
+.life-cta:focus-visible { outline: 2px solid var(--lf-sky); outline-offset: 6px; }
+
+/* Cards: the photograph fills the card, a deep-ocean scrim keeps the label readable */
+.life-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--lf-gap); }
+.life-card { min-width: 0; }
+.life-card-link {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-end;
+  height: 100%; padding: clamp(14px, 1.5vw, 24px); padding-right: clamp(60px, 5vw, 76px);
+  overflow: hidden; border-radius: 6px; background: #0E2A47; color: #FFFFFF;
+  isolation: isolate;
+}
+.life-card-link img {
+  position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center;
+  transition: transform 1.1s var(--lf-ease);
+}
+/* Per-photo framing so each subject stays in view when the card crops it */
+.life-card--living img { object-position: 40% 55%; }        /* bed and the sunset balcony */
+.life-card--dining img { object-position: 55% 45%; }
+.life-card--shopping img { object-position: 50% 45%; }      /* the promenade's vanishing point */
+.life-card--entertainment img { object-position: 78% 50%; } /* stage and pool on the right */
+.life-card--wellness img { object-position: 40% 62%; }      /* swimmer in the infinity pool */
+.life-card--healthcare img { object-position: 55% 45%; }
+.life-card--education img { object-position: 62% 40%; }    /* lecturer and the maritime screen */
+.life-card-link::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(0deg, rgba(13, 30, 52, .92) 0%, rgba(13, 30, 52, .55) 36%, rgba(13, 30, 52, 0) 66%);
+}
+.life-card-index { font-size: clamp(8px, .65vw, 10px); font-weight: 600; letter-spacing: .18em; color: #4FC3F7; }
+.life-card-title {
+  margin: 6px 0 0;
+  font-size: clamp(.95rem, 1.25vw, 1.35rem); font-weight: 600; line-height: 1.15; letter-spacing: .14em; text-transform: uppercase;
+}
+.life-card-text { max-width: 24ch; margin: 6px 0 0; font-size: clamp(.68rem, .78vw, .85rem); line-height: 1.35; color: rgba(255, 255, 255, .82); }
+.life-card-arrow {
+  position: absolute; right: clamp(14px, 1.5vw, 24px); bottom: clamp(14px, 1.5vw, 24px);
+  display: grid; place-items: center; width: clamp(34px, 2.6vw, 42px); aspect-ratio: 1;
+  border: 1px solid rgba(255, 255, 255, .7); border-radius: 50%; font-size: 15px;
+  transition: background-color .3s ease, border-color .3s ease, transform .3s ease;
+}
+.life-card-link:hover img, .life-card-link:focus-visible img { transform: scale(1.04); }
+.life-card-link:hover .life-card-arrow, .life-card-link:focus-visible .life-card-arrow {
+  background: var(--lf-sky); border-color: var(--lf-sky); transform: translateX(3px);
+}
+.life-card-link:focus-visible { outline: 2px solid var(--lf-sky); outline-offset: 3px; }
+
+/* Desktop / laptop: exactly one screen. The container splits the height ~42 / 58 between the intro band and
+   the two gallery rows; images and cards stretch to whatever their row is given, so nothing is cut off. */
+@media (min-width: 1024px) {
+  .life {
+    height: 100vh; height: 100svh; min-height: 0; max-height: none;
+    display: flex; flex-direction: column;
+    padding: clamp(22px, 3vh, 45px) clamp(24px, 3.5vw, 60px);
+  }
+  .life-container {
+    flex: 1; min-height: 0; width: min(100%, 1500px);
+    display: grid; grid-template-rows: minmax(0, .42fr) minmax(0, .58fr); row-gap: var(--lf-gap);
+  }
+  .life-head { min-height: 0; }
+  .life-media { position: absolute; top: 0; right: 0; bottom: 0; width: 64%; min-height: 0; }
+  .life-copy { padding: 0 0 clamp(6px, 1.5vh, 20px) clamp(4px, 1vw, 16px); }
+  .life-title { font-size: clamp(2.2rem, min(3.7vw, 6.4vh), 4.5rem); line-height: .97; }
+
+  .life-grid {
+    height: 100%; min-height: 0;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: minmax(0, 1.12fr) minmax(0, 1fr); /* first row a touch taller, as before */
+  }
+  .life-card { grid-column: span 3; min-height: 0; }
+  .life-card--living { grid-column: span 6; }
+}
+
+/* Short laptop screens (≤800px tall): tighter padding, type and spacing */
+@media (min-width: 1024px) and (max-height: 800px) {
+  .life { --lf-gap: clamp(6px, .6vw, 10px); padding-block: clamp(16px, 2.6vh, 26px); }
+  .life-title { font-size: clamp(1.9rem, min(3.3vw, 6vh), 3.4rem); }
+  .life-eyebrow { margin-bottom: 10px; }
+  .life-lead { margin-top: 10px; font-size: .9rem; line-height: 1.5; }
+  .life-cta { margin-top: 12px; }
+  .life-cta-icon { width: 36px; }
+  .life-card-title { font-size: clamp(.88rem, 1.1vw, 1.15rem); margin-top: 4px; }
+  .life-card-text { margin-top: 3px; font-size: clamp(.66rem, .72vw, .78rem); }
+}
+
+/* Very short screens (≈700px tall and below): more compact still */
+@media (min-width: 1024px) and (max-height: 700px) {
+  .life { padding-block: 14px; }
+  .life-container { grid-template-rows: minmax(0, .44fr) minmax(0, .56fr); }
+  .life-title { font-size: clamp(1.7rem, min(3vw, 5.6vh), 2.8rem); }
+  .life-eyebrow { margin-bottom: 8px; font-size: 10px; }
+  .life-lead { margin-top: 8px; font-size: .84rem; line-height: 1.45; }
+  .life-cta { margin-top: 10px; }
+  .life-cta-icon { width: 32px; font-size: 14px; }
+  .life-card-link { padding: 12px; padding-right: 54px; }
+  .life-card-arrow { right: 12px; bottom: 12px; width: 32px; font-size: 13px; }
+}
+
+/* Tablet: natural height; copy, then the image, then two cards per row with Living full width */
+@media (max-width: 1023px) {
+  .life { padding: clamp(56px, 7vh, 80px) clamp(24px, 4vw, 40px); }
+  .life-head { flex-direction: column; align-items: stretch; }
+  .life-media { position: relative; order: 1; margin: clamp(28px, 4vh, 40px) 0 var(--lf-gap); aspect-ratio: 21 / 9; border-radius: 6px; }
+  .life-media { -webkit-mask-image: none; mask-image: none; } /* a plain rounded image when stacked */
+  .life-copy { max-width: 600px; }
+
+  .life-grid { grid-template-columns: repeat(2, 1fr); }
+  .life-card--living { grid-column: span 2; }
+  .life-card-link { height: auto; aspect-ratio: 16 / 10; }
+  .life-card--living .life-card-link { aspect-ratio: 21 / 9; }
+}
+
+/* Mobile: compact two-column grid, padding 20px; the arrow moves to the top corner to free the label width */
+@media (max-width: 767px) {
+  .life { min-height: 100svh; padding: 64px 20px; overflow: visible; }
+  .life-title { font-size: clamp(2.2rem, 10vw, 3rem); }
+  .life-media { aspect-ratio: 16 / 10; }
+  .life-card-link { aspect-ratio: 4 / 3; padding: 14px; }
+  .life-card--living .life-card-link { aspect-ratio: 16 / 10; }
+  .life-card-arrow { top: 12px; right: 12px; bottom: auto; width: 32px; font-size: 13px; }
+  .life-card-title { font-size: .78rem; letter-spacing: .08em; }
+  .life-card-text { font-size: .72rem; }
+}
+
+/* Very small phones: one card per row */
+@media (max-width: 420px) {
+  .life-grid { grid-template-columns: 1fr; }
+  .life-card--living { grid-column: auto; }
+  .life-card-link, .life-card--living .life-card-link { aspect-ratio: 16 / 10; }
+  .life-card-title { font-size: 1rem; letter-spacing: .12em; }
+  .life-card-text { font-size: .8rem; }
+}
+
+/* Entrance (only once js/life.js arms the section) */
+[data-life-reveal].is-armed .life-media,
+[data-life-reveal].is-armed .life-copy > *,
+[data-life-reveal].is-armed .life-card { opacity: 0; }
+
+[data-life-reveal].is-visible .life-media { animation: lf-fade 1.1s ease both; }
+[data-life-reveal].is-visible .life-copy > * { animation: lf-rise .8s var(--lf-ease) both; }
+[data-life-reveal].is-visible .life-eyebrow { animation-delay: .1s; }
+[data-life-reveal].is-visible .life-title { animation-delay: .2s; }
+[data-life-reveal].is-visible .life-lead { animation-delay: .35s; }
+[data-life-reveal].is-visible .life-cta { animation-delay: .45s; }
+[data-life-reveal].is-visible .life-card { animation: lf-rise .8s var(--lf-ease) both; animation-delay: calc(.5s + var(--i) * 80ms); }
+
+@keyframes lf-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lf-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
