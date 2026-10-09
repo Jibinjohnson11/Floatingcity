@@ -1,4 +1,4 @@
-// Hero "city in numbers" band: once the preloader has gone and the hero text has risen in,
+// Hero "city in numbers" band: as soon as the hero text is under way and the band is on screen,
 // fades the band in and counts each figure up once. Final values are already in the HTML,
 // so without JS or with reduced motion everything simply shows in its final state.
 (function () {
@@ -10,9 +10,8 @@
 
   var root = document.documentElement;
   var format = new Intl.NumberFormat('en-GB');
-  var duration = 1800;
-  var heroTextMs = 1100; // hero title/lead/CTA entrance (.9s + .2s stagger)
-  var pauseMs = 800;     // breath after the CTA before the numbers appear
+  var duration = 1000;
+  var afterHeroMs = 300; // lets the hero title lead; the band follows while the CTA is still rising
   var counters = band.querySelectorAll('.counter[data-target]');
 
   // Ease-out quart: fast start, long settle into the final value
@@ -32,23 +31,35 @@
 
   function play() {
     band.classList.add('is-visible');
-    // Each count starts as its column rises in (matches the CSS stagger: 250ms + i × 100ms)
+    // Each count starts as its column rises in (matches the CSS stagger: 80ms + i × 60ms)
     counters.forEach(function (el) {
       var i = parseInt(el.closest('.hero-stat').style.getPropertyValue('--i'), 10) || 0;
-      setTimeout(function () { count(el); }, 250 + i * 100);
+      setTimeout(function () { count(el); }, 80 + i * 60);
     });
   }
 
   band.classList.add('is-armed');
   counters.forEach(function (el) { el.textContent = '0'; });
 
-  // Wait for the preloader to clear (it removes .is-loading from <html>), then for the hero text
-  function schedule() { setTimeout(play, heroTextMs + pauseMs); }
-  if (!root.classList.contains('is-loading')) {
+  // Start once the hero text has begun (.hero-go, added as the preloader fades) and the band is in view
+  var started = false;
+  function heroGo() { return root.classList.contains('hero-go') || !root.classList.contains('is-loading'); }
+  function startWhenVisible() {
+    if (!('IntersectionObserver' in window)) { play(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting || started) return;
+      started = true;
+      io.disconnect();
+      play();
+    }, { threshold: 0 });
+    io.observe(band);
+  }
+  function schedule() { setTimeout(startWhenVisible, afterHeroMs); }
+  if (heroGo()) {
     schedule();
   } else {
     var mo = new MutationObserver(function () {
-      if (root.classList.contains('is-loading')) return;
+      if (!heroGo()) return;
       mo.disconnect();
       schedule();
     });

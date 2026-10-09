@@ -7,11 +7,15 @@
   <meta name="description" content="Muziris – City At Sea: a proposed floating smart city by Floating City Limited. A city without borders.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="Assets/logo/logo-web.png">
   <link rel="stylesheet" href="css/styles.css">
   <!-- Show the preloader only when JS can remove it; without JS the page shows straight away -->
-  <script>document.documentElement.classList.add('is-loading');</script>
+  <script>document.documentElement.classList.add('is-loading');
+    // Safety net: never leave the hero hidden behind the preloader if its script is slow or fails
+    setTimeout(function () { var r = document.documentElement; r.classList.add('hero-go'); r.classList.remove('is-loading'); }, 2500);</script>
+  <!-- About collage starts hidden only when its scroll reveal will run (js/about.js) -->
+  <script>if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('ab-pending');</script>
   <script src="js/preloader.js" defer></script>
   <script src="js/hero.js" defer></script>
   <script src="js/nav.js" defer></script>
@@ -104,53 +108,53 @@
           <span class="about-title-line about-title-line--accent"><span class="about-title-inner">A city in motion.</span></span>
         </h2>
         <div class="about-body">
-          <p>Muziris represents a new vision for life at sea — a connected global city where people can live, work, discover and belong while journeying across the world.</p>
+          <p>Muziris represents a new vision for life at sea a connected global city where people can live, work, discover and belong while journeying across the world.</p>
           <p>Designed around people, possibility and progress, it reimagines the relationship between city life and the ocean.</p>
         </div>
         <ul class="about-features">
           <li class="about-feature" style="--i:0">
-            <span class="about-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="9" r="2.3"/><path d="M15.5 14.2A4.5 4.5 0 0 1 21 18.5"/></svg></span>
-            <span class="about-feature-index">01</span>
+            <svg class="about-feature-icon" viewBox="0 0 24 24" fill="none" stroke="url(#ab-icon-grad)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M15.4 14.6c2.6-.3 4.6 1.4 5.1 4.4"/></svg>
             <h3 class="about-feature-title">People</h3>
             <p class="about-feature-text">A global community without borders.</p>
           </li>
           <li class="about-feature" style="--i:1">
-            <span class="about-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/><circle cx="12" cy="12" r="2.5"/></svg></span>
-            <span class="about-feature-index">02</span>
+            <svg class="about-feature-icon" viewBox="0 0 24 24" fill="none" stroke="url(#ab-icon-grad)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 16.5a5 5 0 0 1 10 0"/><path d="M3 16.5h18M6 20h12"/><path d="M12 5v2.5M5.2 8.2l1.7 1.7M18.8 8.2l-1.7 1.7M2.8 13h1.8M19.4 13h1.8"/></svg>
             <h3 class="about-feature-title">Possibilities</h3>
             <p class="about-feature-text">New ways to live, work and grow.</p>
           </li>
           <li class="about-feature" style="--i:2">
-            <span class="about-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14Z"/><path d="M5 19l7-7"/></svg></span>
-            <span class="about-feature-index">03</span>
+            <svg class="about-feature-icon" viewBox="0 0 24 24" fill="none" stroke="url(#ab-icon-grad)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17.5c2.2 0 3.2-2 5-2s2.8 2 5 2"/><path d="M4 12.5c3.5-.3 6.6-2.4 9.4-6.3"/><path d="M9.6 5.6l4.2.3-.4 4.2"/><path d="M15 17.5c1.6 0 2.6-1.1 3.6-1.7.8-.5 1.6-.4 2.4.2"/></svg>
             <h3 class="about-feature-title">Progress</h3>
             <p class="about-feature-text">A cleaner, smarter future at sea.</p>
           </li>
           <li class="about-feature" style="--i:3">
-            <span class="about-feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg></span>
-            <span class="about-feature-index">04</span>
+            <svg class="about-feature-icon" viewBox="0 0 24 24" fill="none" stroke="url(#ab-icon-grad)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="6.5"/><path d="M5.5 12h13M12 5.5c1.8 1.8 2.7 4 2.7 6.5s-.9 4.7-2.7 6.5c-1.8-1.8-2.7-4-2.7-6.5s.9-4.7 2.7-6.5Z"/><path d="M3.2 15.6c-1.3 1.9-1.6 3.3-.8 3.9 1.5 1.1 6.7-1.4 11.6-5.4 4.9-4 8.1-8.6 6.6-9.7-.7-.5-2.1-.1-3.9 1"/></svg>
             <h3 class="about-feature-title">Connection</h3>
             <p class="about-feature-text">Bridging cultures across the world.</p>
           </li>
         </ul>
-        <a class="about-cta" href="about.html">Discover our story <span class="about-cta-arrow" aria-hidden="true">→</span></a>
+        <!-- Shared navy → cyan stroke for the feature icons -->
+        <svg class="about-icon-defs" width="0" height="0" aria-hidden="true" focusable="false">
+          <defs><linearGradient id="ab-icon-grad" gradientUnits="userSpaceOnUse" x1="2" y1="4" x2="22" y2="20"><stop offset="0" stop-color="#0D3B66"/><stop offset="1" stop-color="#00AEEF"/></linearGradient></defs>
+        </svg>
+        <a class="about-cta" href="about.html">Discover our story <span class="about-cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
       </div>
 
       <div class="about-collage">
         <figure class="about-shot about-shot--main">
           <img src="Assets/Images/about/journey.jpg" width="1060" height="1484" loading="lazy" decoding="async"
                alt="Officers navigating Muziris from the bridge">
-          <figcaption class="about-shot-caption"><span class="about-shot-label">Our journey</span>A brighter tomorrow</figcaption>
+          <figcaption class="about-shot-caption">A brighter tomorrow</figcaption>
         </figure>
         <figure class="about-shot about-shot--vision">
           <img src="Assets/Images/about/vision.jpg" width="1672" height="941" loading="lazy" decoding="async"
                alt="A terrace lounge aboard Muziris overlooking the sea at sunset">
-          <figcaption class="about-shot-caption"><span class="about-shot-index">01</span>Our vision</figcaption>
+          <figcaption class="about-shot-caption">Our vision</figcaption>
         </figure>
         <figure class="about-shot about-shot--home">
           <img src="Assets/Images/about/ocean.jpg" width="1536" height="1024" loading="lazy" decoding="async"
                alt="A suite aboard Muziris opening onto an ocean-view terrace">
-          <figcaption class="about-shot-caption"><span class="about-shot-index">02</span>A global home</figcaption>
+          <figcaption class="about-shot-caption">A global home</figcaption>
         </figure>
       </div>
     </div>
