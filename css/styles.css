@@ -18,6 +18,9 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+/* Reserve the scrollbar's space so the page width never changes when the preloader unlocks scrolling */
+html { scrollbar-gutter: stable; }
+
 body {
   margin: 0;
   font-family: var(--font);
@@ -174,7 +177,10 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
   position: absolute; inset: 0; width: 100%; height: 100%;
   object-fit: cover; object-position: center;
   pointer-events: none;
+  transition: opacity .6s ease;
 }
+/* Set by js/hero.js only while the first frame is still missing */
+.hero-video.is-pending { opacity: 0; }
 .hero-video::-webkit-media-controls,
 .hero-video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
 
@@ -250,7 +256,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
 .is-loading:not(.hero-go) .hero-content > * { animation-play-state: paused; }
 
 @media (prefers-reduced-motion: no-preference) {
-  .preloader-logo { animation: logo-in .9s ease both, float 3.2s ease-in-out .9s infinite; }
+  .preloader-logo { animation: logo-in .5s ease both, float 3.2s ease-in-out .5s infinite; }
   .preloader-bar::after { animation: sweep 1.4s ease-in-out infinite; }
 }
 @keyframes logo-in { from { opacity: 0; transform: translateY(12px) scale(.96); } }
@@ -445,27 +451,42 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
    js/intro.js plays the film and adds .is-armed / .is-visible to each [data-reveal] group for the entrance. */
 .intro {
   /* Light-on-dark palette for the video background */
-  --in-ocean: #FFFFFF; --in-sky: #4FC3F7; --in-slate: #1B2E4B; --in-gray: rgba(230, 244, 255, .66); --in-body: rgba(230, 244, 255, .84);
+  --in-ocean: #FFFFFF; --in-sky: #4FC3F7; --in-slate: #1B2E4B; --in-gray: rgba(230, 244, 255, .86); --in-body: rgba(240, 248, 255, .94);
   --in-ease: cubic-bezier(.22, .61, .36, 1);
   --in-container: min(90vw, 1380px);
   position: relative; overflow: hidden; isolation: isolate;
-  padding: clamp(90px, 9vw, 150px) 0 clamp(70px, 7vw, 110px);
+  /* Full screen: at least one viewport tall, edge to edge; the copy sits in the upper part and the
+     pillars anchor to the bottom, so the film fills the space between them */
+  width: 100%; min-height: 100vh; min-height: 100svh;
+  display: flex; flex-direction: column;
+  padding: clamp(80px, 11vh, 140px) 0 clamp(48px, 7vh, 96px);
   background: #0B2948; /* shows until the video's first frame */
   color: var(--in-ocean);
 }
 
-/* Background film, shown exactly as shot: no overlay, tint or filter. Content sits above it. */
+/* Background film, shown as shot (no filter). A balanced navy scrim sits over it only where text lives:
+   strongest at the left behind the copy, gone by the middle so the city stays bright, plus a low band
+   along the bottom behind the pillars. Content sits above both. */
 .intro-media { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.intro-media::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(7, 27, 48, .72) 0%, rgba(9, 36, 64, .5) 28%, rgba(13, 59, 102, .16) 50%, rgba(13, 59, 102, 0) 64%),
+    linear-gradient(0deg, rgba(7, 27, 48, .7) 0%, rgba(9, 36, 64, .38) 18%, rgba(13, 59, 102, 0) 38%);
+}
 .intro-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 1; filter: none; pointer-events: none; }
 .intro-video::-webkit-media-controls,
 .intro-video::-webkit-media-controls-start-playback-button { display: none !important; -webkit-appearance: none; }
 
-.intro-container { position: relative; z-index: 2; width: var(--in-container); margin: 0 auto; }
-/* Readability over the untinted film comes from the text itself, not a layer */
+.intro-container {
+  position: relative; z-index: 2; width: var(--in-container); margin: 0 auto;
+  flex: 1; display: flex; flex-direction: column;
+}
+/* A soft shadow helps the text against the brightest frames, on top of the scrim */
 .intro-eyebrow, .intro-title, .intro-lead,
-.intro-pillar-index, .intro-pillar-title, .intro-pillar-text { text-shadow: 0 2px 12px rgba(0, 25, 45, .25); }
+.intro-pillar-index, .intro-pillar-title, .intro-pillar-text { text-shadow: 0 1px 2px rgba(0, 20, 40, .35), 0 2px 18px rgba(0, 20, 40, .35); }
 
-.intro-main { max-width: 620px; }
+.intro-main { max-width: 620px; margin-bottom: clamp(48px, 8vh, 110px); }
 
 .intro-eyebrow {
   margin: 0 0 28px; display: flex; align-items: center; gap: 14px;
@@ -484,13 +505,13 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
 
 .intro-lead {
   margin: 0; max-width: 500px;
-  font-size: clamp(1rem, 1.15vw, 1.15rem); line-height: 1.75; font-weight: 400; color: var(--in-body);
+  font-size: clamp(1rem, 1.15vw, 1.15rem); line-height: 1.8; font-weight: 500; color: var(--in-body);
 }
 
 /* Live / Work / Explore / Belong: one row under a single hairline, no cards */
 .intro-pillars {
-  margin: clamp(70px, 7vw, 110px) 0 0; padding: clamp(32px, 3.5vw, 48px) 0 0; list-style: none;
-  border-top: 1px solid rgba(230, 244, 255, .18);
+  margin: auto 0 0; padding: clamp(32px, 3.5vw, 48px) 0 0; list-style: none; /* margin-top: auto pins the row to the bottom */
+  border-top: 1px solid rgba(230, 244, 255, .3);
   display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(30px, 4vw, 70px);
 }
 .intro-pillar-index { display: block; margin-bottom: 14px; font-size: 10px; font-weight: 600; letter-spacing: .15em; color: var(--in-sky); }
@@ -499,11 +520,11 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
   font-size: clamp(1.15rem, 1.5vw, 1.45rem); font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
   color: var(--in-ocean); transition: color .3s ease;
 }
-.intro-pillar-text { margin: 0; max-width: 230px; font-size: .86rem; line-height: 1.6; color: var(--in-gray); transition: color .3s ease; }
+.intro-pillar-text { margin: 0; max-width: 230px; font-size: .88rem; font-weight: 500; line-height: 1.6; color: var(--in-gray); transition: color .3s ease; }
 
 @media (hover: hover) {
   .intro-pillar:hover .intro-pillar-title { color: var(--in-sky); }
-  .intro-pillar:hover .intro-pillar-text { color: rgba(230, 244, 255, .92); }
+  .intro-pillar:hover .intro-pillar-text { color: #FFFFFF; }
 }
 
 /* Tablet / small laptop: pillars 2 × 2 */
@@ -511,15 +532,35 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
   .intro-eyebrow { margin-bottom: 20px; }
   .intro-title { font-size: clamp(2.2rem, 4.6vw, 2.8rem); margin-bottom: 24px; }
   .intro-pillars { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
+  .intro-media::after {
+    background:
+      linear-gradient(90deg, rgba(7, 27, 48, .72) 0%, rgba(9, 36, 64, .48) 40%, rgba(13, 59, 102, .12) 66%, rgba(13, 59, 102, 0) 80%),
+      linear-gradient(0deg, rgba(7, 27, 48, .74) 0%, rgba(9, 36, 64, .42) 28%, rgba(13, 59, 102, 0) 50%);
+  }
 }
 
 /* Mobile: copy, then the pillars stacked */
 @media (max-width: 700px) {
-  .intro { padding: 72px 0 64px; }
+  .intro { padding: 72px 0 56px; }
+  .intro-main { margin-bottom: 48px; }
   .intro-container { width: calc(100% - 44px); }
   .intro-title { font-size: clamp(2.3rem, 10vw, 2.8rem); }
-  .intro-pillars { grid-template-columns: 1fr; gap: 32px; margin-top: 56px; padding-top: 32px; }
+  .intro-pillars { grid-template-columns: 1fr; gap: 28px; padding-top: 28px; }
   .intro-pillar-text { max-width: 320px; }
+  .intro-media::after {
+    background:
+      linear-gradient(180deg, rgba(7, 27, 48, .7) 0%, rgba(9, 36, 64, .45) 34%, rgba(13, 59, 102, .12) 50%, rgba(13, 59, 102, 0) 58%),
+      linear-gradient(0deg, rgba(7, 27, 48, .8) 0%, rgba(9, 36, 64, .5) 34%, rgba(13, 59, 102, 0) 56%);
+  }
+}
+
+/* Short landscape screens: tighter rhythm; the section simply grows past one screen if it must */
+@media (orientation: landscape) and (max-height: 560px) {
+  .intro { padding: 56px 0 40px; }
+  .intro-main { margin-bottom: 36px; }
+  .intro-eyebrow { margin-bottom: 16px; }
+  .intro-title { margin-bottom: 18px; font-size: clamp(1.9rem, 7vh, 2.6rem); }
+  .intro-pillars { row-gap: 24px; padding-top: 24px; }
 }
 
 /* Entrance (only once js/intro.js arms a group) */
@@ -706,6 +747,21 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
   .about-shot--vision, .about-shot--home { aspect-ratio: 1; }
   .about-shot { border-radius: 12px; }
   .about-shot-caption { font-size: .78rem; }
+  .about-cta { gap: 20px; padding-left: 24px; letter-spacing: .18em; }
+}
+
+/* Small phones (≤ 380px): long feature titles and the CTA tighten instead of breaking mid-word */
+@media (max-width: 380px) {
+  .about-features { column-gap: 14px; }
+  .about-feature-title { font-size: .66rem; letter-spacing: .08em; }
+  .about-feature-text { font-size: .76rem; }
+  .about-cta { gap: 14px; padding-left: 20px; font-size: 11px; letter-spacing: .14em; }
+  .about-cta-arrow { width: 38px; }
+}
+
+/* Phones on their side: keep the stacked collage within the screen height */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 768px) and (max-width: 1100px) {
+  .about-collage { height: clamp(280px, 82vh, 400px); }
 }
 
 /* Entrance (only once js/about.js arms the section). Story: label → heading lines → copy → features → CTA;
@@ -836,8 +892,10 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
 .life-card-link:focus-visible { outline: 2px solid var(--lf-sky); outline-offset: 3px; }
 
 /* Desktop / laptop: exactly one screen. The container splits the height ~42 / 58 between the intro band and
-   the two gallery rows; images and cards stretch to whatever their row is given, so nothing is cut off. */
-@media (min-width: 1024px) {
+   the two gallery rows; images and cards stretch to whatever their row is given, so nothing is cut off.
+   Needs at least 620px of height; shorter wide screens (small laptops, tablets and phones on their side)
+   use the flowing tablet layout below instead, so text is never clipped. */
+@media (min-width: 1024px) and (min-height: 620px) {
   .life {
     height: 100vh; height: 100svh; min-height: 0; max-height: none;
     display: flex; flex-direction: column;
@@ -862,7 +920,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
 }
 
 /* Short laptop screens (≤800px tall): tighter padding, type and spacing */
-@media (min-width: 1024px) and (max-height: 800px) {
+@media (min-width: 1024px) and (min-height: 620px) and (max-height: 800px) {
   .life { --lf-gap: clamp(6px, .6vw, 10px); padding-block: clamp(16px, 2.6vh, 26px); }
   .life-title { font-size: clamp(1.9rem, min(3.3vw, 6vh), 3.4rem); }
   .life-eyebrow { margin-bottom: 10px; }
@@ -874,7 +932,7 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
 }
 
 /* Very short screens (≈700px tall and below): more compact still */
-@media (min-width: 1024px) and (max-height: 700px) {
+@media (min-width: 1024px) and (min-height: 620px) and (max-height: 700px) {
   .life { padding-block: 14px; }
   .life-container { grid-template-rows: minmax(0, .44fr) minmax(0, .56fr); }
   .life-title { font-size: clamp(1.7rem, min(3vw, 5.6vh), 2.8rem); }
@@ -886,8 +944,8 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--heading-font); }
   .life-card-arrow { right: 12px; bottom: 12px; width: 32px; font-size: 13px; }
 }
 
-/* Tablet: natural height; copy, then the image, then two cards per row with Living full width */
-@media (max-width: 1023px) {
+/* Tablet (and short wide screens): natural height; copy, then the image, then two cards per row with Living full width */
+@media (max-width: 1023px), (max-height: 619px) {
   .life { padding: clamp(56px, 7vh, 80px) clamp(24px, 4vw, 40px); }
   .life-head { flex-direction: column; align-items: stretch; }
   .life-media { position: relative; order: 1; margin: clamp(28px, 4vh, 40px) 0 var(--lf-gap); aspect-ratio: 21 / 9; border-radius: 6px; }

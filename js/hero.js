@@ -8,6 +8,15 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  // On a slow connection the preloader may leave before the first frame is decoded: keep the video
+  // transparent (deep-ocean fill shows) until it can paint, then fade it in rather than popping
+  function reveal() { video.classList.remove('is-pending'); }
+  if (video.readyState < 2) {
+    video.classList.add('is-pending');
+    video.addEventListener('loadeddata', reveal);
+    video.addEventListener('error', reveal, true);
+  }
+
   function play() {
     if (reduceMotion.matches) return;
     var p = video.play();
